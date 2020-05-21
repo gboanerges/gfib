@@ -7,6 +7,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import Moment from 'moment';
 
+import XLSX from 'xlsx';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+
 import api from '../../services/api';
 
 import styles from './styles';
@@ -19,7 +23,7 @@ export default function Report() {
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    console.log('onChange');
+
     const currentDate = selectedDate || date;
 
     setShow(Platform.OS === 'ios');
@@ -36,19 +40,43 @@ export default function Report() {
 
   function getReport(data){
 
-    console.log('getReport');
-    console.log(data);
-
-    const compra = orders.filter(order => order.created_at.split(' ', 1) == Moment(data).format('YYYY-MM-DD'))
-    console.log(compra);
-
+    const compra = orders.filter(order => order.created_at.split(' ', 1) == Moment(data).format('YYYY-MM-DD'));
+    
     setOrdersByDay(compra);
-    setTotalOrder(sumObject(compra, 'value'));
-    setTotalReceived(sumObject(compra, 'receivedValue'));
-    setTotalCash(sumObject(compra, 'receivedValue'));
-    setTotalUnpaid(sumObject(compra, 'receivedValue'));
-    //console.log(ordersByDay);
+    setTotalOrder(sumObject(compra, 'value', '', 'total'));
+    setTotalReceived(sumObject(compra, 'receivedValue', '', 'totalRec'));
+    setTotalCash(sumObject(compra, 'value', 'R$', 'cash'));
+    setTotalCredit(sumObject(compra, 'value', 'CC', 'credit'));
+    setTotalUnpaid(sumObject(compra, 'value', 'FIADO', 'unpaid'));
   }
+
+  function sumObject (items, prop, type , func){
+    // A == 0 and b is the object, access prop passed
+    return items.reduce( function(a, b){
+
+        if(type === ''){   
+
+          return a + b[prop];
+        }
+        
+        else if(type === 'R$') {
+          
+          return b['paymentType'] === type ? a + b[prop] : a;
+        }
+
+        else if(type === 'CC') {
+
+          return b['paymentType'] === type ? a + b[prop] : a;
+        }
+
+        else if(type === 'FIADO') {
+          
+          return b['paymentType'] === type ? a + b[prop] : a;
+        }
+
+    }, 0);
+  };
+
   const navigation = useNavigation();
 
   function navigateToHome(){
@@ -69,15 +97,8 @@ export default function Report() {
 
     const response = await api.get('orders');
     setOrders(response.data);
-    console.log(date);
     getReport(date);
   }
-
-  function sumObject (items, prop){
-    return items.reduce( function(a, b){
-        return a + b[prop];
-    }, 0);
-  };
 
   // Load orders from db
     useEffect (() => {
@@ -175,7 +196,7 @@ export default function Report() {
                 {Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL', 
-                  }).format(totalCash)}
+                  }).format(totalCredit)}
                 </Text>
               </View>
 
@@ -212,7 +233,7 @@ export default function Report() {
 
         <TouchableOpacity style={styles.confirmButton} onPress={()=>{}}>
           <Text style={styles.buttonText}>
-            Texto 2
+            Exportar
           </Text>
         </TouchableOpacity>
       </View>
