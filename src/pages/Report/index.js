@@ -43,14 +43,15 @@ export default function Report() {
     const compra = orders.filter(order => order.created_at.split(' ', 1) == Moment(data).format('YYYY-MM-DD'));
     
     setOrdersByDay(compra);
-    setTotalOrder(sumObject(compra, 'value', '', 'total'));
-    setTotalReceived(sumObject(compra, 'receivedValue', '', 'totalRec'));
-    setTotalCash(sumObject(compra, 'value', 'R$', 'cash'));
-    setTotalCredit(sumObject(compra, 'value', 'CC', 'credit'));
-    setTotalUnpaid(sumObject(compra, 'value', 'FIADO', 'unpaid'));
+    setTotalOrder(sumObject(compra, 'value', ''));
+    setTotalReceived(sumObject(compra, 'receivedValue', ''));
+    setTotalCash(sumObject(compra, 'value', 'R$'));
+    setTotalCredit(sumObject(compra, 'value', 'CC'));
+    setTotalUnpaid(sumObject(compra, 'value', 'FIADO'));
+
   }
 
-  function sumObject (items, prop, type , func){
+  function sumObject (items, prop, type ){
     // A == 0 and b is the object, access prop passed
     return items.reduce( function(a, b){
 
@@ -77,6 +78,46 @@ export default function Report() {
     }, 0);
   };
 
+  async function createXlsx(){
+
+    if(ordersByDay.length > 0) {
+
+      const dataCompra = Moment(date).format('DDMMYYYY');
+
+      var ws = XLSX.utils.json_to_sheet(ordersByDay);
+
+      var wb = XLSX.utils.book_new();
+      
+      XLSX.utils.sheet_add_aoa(ws, [
+        [" ", ' '],
+        ["Valor Total", totalOrder],
+        ["Valor Recebido", totalReceived],
+        ["Valor Dinheiro", totalCash],
+        ["Valor Cartão de Credito", totalCredit],
+        ["Valor Fiado", totalUnpaid],
+      ], {origin:-1});
+
+      XLSX.utils.book_append_sheet(wb, ws, "GFIB_Tabela_" + Moment(date).format('DD-MM-YYYY'));
+
+      const wbout = XLSX.write(wb, {
+        type: 'base64',
+        bookType: "xlsx"
+      });
+
+      const uri = FileSystem.cacheDirectory + 'gfib_tabela_'+ dataCompra + '.xlsx';
+      
+      await FileSystem.writeAsStringAsync(uri, wbout, {
+        encoding: FileSystem.EncodingType.Base64
+      });
+
+      await Sharing.shareAsync(uri, {
+        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        dialogTitle: 'MyWater data',
+        UTI: 'com.microsoft.excel.xlsx'
+      });
+    }
+  }
+  
   const navigation = useNavigation();
 
   function navigateToHome(){
@@ -231,7 +272,7 @@ export default function Report() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.confirmButton} onPress={()=>{}}>
+        <TouchableOpacity style={styles.confirmButton} onPress={createXlsx}>
           <Text style={styles.buttonText}>
             Exportar
           </Text>
