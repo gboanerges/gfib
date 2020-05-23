@@ -49,6 +49,23 @@ export default function Report() {
     setTotalCredit(sumObject(compra, 'value', 'CC'));
     setTotalUnpaid(sumObject(compra, 'value', 'FIADO'));
 
+    if(compra.length > 0){
+    
+      compra.forEach((order) => {
+
+        let produtos = JSON.parse(order.products);
+
+        delete order.products;
+
+        produtos.forEach((prod) =>{
+
+          order[prod.name] = prod.quantity ;
+        });
+      });
+
+      console.log(compra);
+    }
+
   }
 
   function sumObject (items, prop, type ){
@@ -128,6 +145,8 @@ export default function Report() {
   const [orders, setOrders] = useState([]);
   const [ordersByDay, setOrdersByDay] = useState([]);
 
+  const [productList, setProductList] = useState([]);
+
   const [totalOrder, setTotalOrder] = useState(0);
   const [totalReceived, setTotalReceived] = useState(0);
   const [totalCash, setTotalCash] = useState(0);
@@ -138,7 +157,7 @@ export default function Report() {
 
     const response = await api.get('orders');
     setOrders(response.data);
-    getReport(date);
+    //getReport(date);
   }
 
   // Load orders from db
