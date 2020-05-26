@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { Alert, View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 
@@ -19,17 +19,6 @@ export default function ProductSettings() {
 
   }
   
-  const [productId, setProductId] = useState(false);
-
-  function alterProduct(id){
-    
-    if(id === productId){
-
-      setProductId(0);
-    }else 
-      setProductId(id);
- }
-
   const [products, setProducts] = useState([]);
   async function loadProducts(){
 
@@ -38,10 +27,25 @@ export default function ProductSettings() {
     setProducts(response.data);
   }
 
-  // Modal usage
+  // Modal Add new product
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
+
+    // Set name and price to check if they are empty for add to db
+    onChangeName('');
+    onChangePrice('');
     setModalVisible(!isModalVisible);
+  };
+
+  // Modal Update Product
+  const [updateModal, setUpdateModal] = useState(false);
+  function toggleModalUpdate(name, price, id){
+
+    onChangeNameUpdate(String(name));
+    onChangePriceUpdate(String(price));
+    setProductId(id);
+
+    setUpdateModal(!updateModal);
   };
 
   const [name, onChangeName] = useState('');
@@ -58,11 +62,90 @@ export default function ProductSettings() {
   // Add new product on db
   async function modalConfirm(){
 
-    await api.post('products', product);
-    
-    setModalVisible(!isModalVisible);
-    setNewProduct(newProduct + 1);
+    if(product.name == '' || product.price == ''){
+      
+      Alert.alert(
+        "Erro ao cadastrar",
+        "Nome e/ou preço vazio.",
+        [
+          { 
+            text: "OK",
+            
+            onPress: () => {}
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+    else{
+
+      await api.post('products', product);
+      
+      setModalVisible(!isModalVisible);
+      setNewProduct(newProduct + 1);
+    }
   }
+
+
+  const [nameUpdate, onChangeNameUpdate] = useState('');
+  const [priceUpdate, onChangePriceUpdate] = useState('');
+  const [productId, setProductId] = useState(0);
+  
+  const productUpdate = {
+    name: nameUpdate,
+    price: priceUpdate
+  }
+
+  // Update product on db
+  async function modalUpdate(){
+
+    if(nameUpdate == '' || priceUpdate == ''){
+      
+      Alert.alert(
+        "Erro ao atualizar",
+        "Nome e/ou preço vazio.",
+        [
+          { 
+            text: "OK",
+            
+            onPress: () => {}
+          }
+        ],
+        { cancelable: false }
+      );
+    } else {
+
+      await api.put(`products/${productId}`, productUpdate);
+      setNewProduct(newProduct + 1);
+      setUpdateModal(!updateModal);
+    }
+
+  }
+
+  async function deleteProduct(){
+
+    await api.delete(`products/${productId}`);
+    setNewProduct(newProduct + 1);
+    setUpdateModal(!updateModal);
+  }
+
+  const deleteProductAlert = () =>
+    Alert.alert(
+      "Apagar Produto",
+      "Deseja realmente apagar o produto?",
+      [
+        {
+          text: "Não",
+          style: "cancel"
+        },
+        { 
+          text: "SIM",
+          
+          onPress: deleteProduct
+        }
+      ],
+      { cancelable: false }
+    );
 
   // Load products from db
   useEffect (() => {
@@ -99,9 +182,6 @@ export default function ProductSettings() {
             Preço             
           </Text>
 
-          <Text>
-            .
-          </Text>
         </View>
         
         <FlatList 
@@ -110,7 +190,6 @@ export default function ProductSettings() {
           keyExtractor={product => String(product.id)}
           showsVerticalScrollIndicator={false}
           renderItem={({item: product }) => (
-            <View style={styles.p}>
               <View style={styles.product}>
 
                 <Text style={styles.productName}>
@@ -132,25 +211,12 @@ export default function ProductSettings() {
                   <Feather name="trash-2" size={32} color="#EB5757"/>
                 </TouchableOpacity> */}
 
-                <TouchableOpacity onPress={() => alterProduct(product.id)}>
-                  <Feather name="chevrons-down" size={32} color="#EB5757"/>
+                <TouchableOpacity onPress={() => toggleModalUpdate(product.name, product.price, product.id)}>
+                  <Feather name="edit" size={32} color="#EB5757"/>
                 </TouchableOpacity>
                 
+               
               </View>
-
-              {/* Se os ids forem iguais, retorna a view para
-                  alterar produto, senao retorna null */}
-              { productId === product.id ? 
-                <View  style={styles.product}>
-                  <TextInput
-                    value={product.name}
-                  />
-                </View>
-              
-                : null}
-
-            </View>
-
           )}
         />
       </View>
@@ -185,6 +251,8 @@ export default function ProductSettings() {
             style={styles.modalInput}
             placeholder="Preço"
             onChangeText={text => onChangePrice(text)}  
+            keyboardType={'numeric'}
+
           />  
 
 
@@ -199,6 +267,41 @@ export default function ProductSettings() {
           </View>
         </View>
       </Modal>
+
+      <Modal isVisible={updateModal}>
+                  
+        <View style={styles.modal}>
+        
+          <Text style={styles.modalTitle}>Atualizar Produto</Text>
+
+          <TextInput
+            style={styles.modalInput}
+            value={nameUpdate}
+            onChangeText={(text) => onChangeNameUpdate(text)}  
+          />
+
+          <TextInput
+            style={styles.modalInput}
+            value={priceUpdate}
+            keyboardType={'numeric'}
+            onChangeText={(text)=> onChangePriceUpdate(text)}  
+          />  
+          <View style={styles.modalButtons}>
+            <TouchableOpacity style={styles.modalCancel} onPress={toggleModalUpdate}>
+              <Text style={styles.modalButtonsText}>Cancelar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.modalDelete} onPress={deleteProductAlert}>
+              <Text style={styles.modalButtonsText}>Deletar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.modalConfirm} onPress={modalUpdate}>
+              <Text style={styles.modalButtonsText}>Confirmar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      
     </View>
   );
 }

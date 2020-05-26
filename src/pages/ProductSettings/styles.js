@@ -36,24 +36,24 @@ export default StyleSheet.create({
   productTag: {
 
     flexDirection: "row",
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     padding: 12,
-
   },
 
   productTagText: {
 
     flexDirection: "row",
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     padding: 12,
     fontSize: 16,
     fontWeight: 'bold',
+    minWidth: 150,
   },
 
   productList: {
 
     padding: 12,
-
+    
   },
 
   product: {
@@ -61,10 +61,11 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+
     padding: 10,
-    marginBottom: 16,
+    marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: '#aaaaa0',
+    backgroundColor: '#ebaeaa',
   },
 
   productName: {
@@ -72,6 +73,9 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#626161',
+    
+    minWidth: 75,
+    maxWidth: 75,
   },
 
   productPriceText: {
@@ -79,6 +83,20 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#626161',
+
+    
+  },
+
+  
+  productUpdate: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 10,
+    padding: 10,
+    borderRadius: 2,
+    backgroundColor: '#ebaeab',
   },
   // End Product Styles
 
@@ -168,6 +186,13 @@ export default StyleSheet.create({
   },
 
   modalCancel: {
+
+    backgroundColor: '#FFBF00',
+    borderRadius: 12,
+    padding: 8,
+  },
+
+  modalDelete: {
 
     backgroundColor: 'red',
     borderRadius: 12,
