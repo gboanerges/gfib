@@ -16,35 +16,196 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
 
-  totalContainer: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  title: {
 
     marginTop: 16,
     padding: 12,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  
+  clientContainer: {
+
+    backgroundColor: '#fafafa',
+    padding: 12,
+    marginTop: 16,
     borderRadius: 8,
-    backgroundColor: '#FFF',
+    minHeight: 590,
+    maxHeight: 590,
+  },
+  
+  clientTags: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 12,
+  },
+  
+  clientName: {
+
+    backgroundColor: '#ebaaaa',
+    borderRadius: 6,
+    fontSize: 16,
+    fontWeight: 'bold',
+    padding: 6,
+    
 
   },
 
-  productList:{
+  clientDebt: {
 
-    marginTop: 32,
+    backgroundColor: '#ebaaaa',
+    borderRadius: 6,
+    fontSize: 16,
+    fontWeight: 'bold',
+    padding: 6,
   },
 
-  product:{
+  order: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-between', 
+    alignItems: 'center',
+    padding: 6,
+    backgroundColor: '#faa',
+    marginTop: 8,
+    borderRadius: 6,
+  },
+
+  orderDate: {
+
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#737380',
+    marginHorizontal: 6,
+    minWidth: 80,
+    maxWidth: 80,
+
+  },
+
+  orderValue: {
+
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#737380',
+    minWidth: 70,
+    maxWidth: 70,
+
+  },
+  
+  toggleUnpaid: {
 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    padding: 24,
-    marginBottom: 16,
-    borderRadius: 8,
-    backgroundColor: '#FFF',
+    padding: 4,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'gray',
+    marginVertical: 10,
   },
+
+  togglePaid: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    padding: 4,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'gray',
+    marginVertical: 10,
+  },
+
+  unpaidTags: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    
+    backgroundColor: '#fafaaa',
+    borderRadius: 4,
+    padding: 6,
+  },
+
+  unpaidTagsText: {
+    
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#737380',
+    
+  },
+  
+  warningOrder: {
+
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+  // Modal 
+  modal: {
+
+    flex: 1,
+    maxHeight: 220,
+
+    borderRadius: 12,
+    backgroundColor: 'white',
+    padding: 16,
+  },
+
+  modalTitle: {
+    
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+
+  modalInput: {
+
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 6,
+    padding: 6,
+    marginBottom: 12,
+  },
+
+  modalButtons: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    left: 16,
+  },
+
+  modalConfirm: {
+
+    backgroundColor: 'green',
+    borderRadius: 12,
+    padding: 8,
+  },
+
+  modalCancel: {
+
+    backgroundColor: 'red',
+    borderRadius: 12,
+    padding: 8,
+  },
+
+  modalButtonsText: {
+
+    color: '#fafafa',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  // END Modal
 
   // Button Styles
   buttonContainer: {
