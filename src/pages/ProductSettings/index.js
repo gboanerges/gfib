@@ -93,7 +93,7 @@ export default function ProductSettings() {
   
   const productUpdate = {
     name: nameUpdate,
-    price: priceUpdate
+    price: parseFloat(priceUpdate.replace(',','.').replace(' ','')),
   }
 
   // Update product on db
