@@ -16,6 +16,15 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
 
+  title: {
+
+    marginTop: 16,
+    padding: 12,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  
   clientContainer: {
 
     backgroundColor: '#fafafa',
@@ -25,17 +34,25 @@ export default StyleSheet.create({
     maxHeight: 500,
   },
 
+  clientTags: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 12,
+  },
+
   clientList: {
 
-
+    
   },
 
   client: {
 
     flexDirection: 'row',
     justifyContent: 'space-between', 
+    alignItems: 'center',
     padding: 4,
-    backgroundColor: '#C0BFBF',
+    backgroundColor: '#faa',
     marginTop: 8,
     borderRadius: 6,
   },
@@ -46,8 +63,21 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     color: '#737380',
     marginHorizontal: 6,
+    minWidth: 80,
+    maxWidth: 80,
+
   },
-  
+
+  clientDebt: {
+
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#737380',
+    maxWidth: 80,
+    minWidth: 80,
+
+  },
+
   clientButton: {
 
     marginHorizontal: 6,
