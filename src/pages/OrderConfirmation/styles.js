@@ -16,6 +16,23 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
 
+  selectContainer: {
+
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+
+  select: {
+
+    width: 300,
+  },
+
+  addClient: {
+
+    position: 'absolute',
+    right: 5,
+  },
+
   selectClient:{
 
     fontSize: 16,
@@ -26,6 +43,32 @@ export default StyleSheet.create({
     borderRadius: 8,
     color: 'black',
     paddingRight: 30, // to ensure the text is never behind the icon
+  },
+
+  totalOrderContainer: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
+    bottom: 0,
+  },
+  
+  totalOrderText: {
+
+    
+    fontSize: 20,
+    fontWeight: 'bold',
+  }, 
+  
+  totalOrderValue: {
+
+     
+    fontSize: 20,
+    fontWeight: 'bold',
+    borderWidth: 2,
+    borderColor: 'black', 
+    padding: 4,
   },
 
   totalContainer: {
@@ -55,7 +98,7 @@ export default StyleSheet.create({
 
     marginTop: 16,
     padding: 16,
-    height: 415,
+    height: 350,
   },
 
   itemsTags: {
@@ -74,70 +117,133 @@ export default StyleSheet.create({
     padding: 14,
   },
 
-  containerTotalValue: {
+
+  // payment Container
+  containerPayment: {
 
     backgroundColor: '#fafaf9',
     borderRadius: 8,
     padding: 8,
     marginTop: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+
     position:'absolute',
     bottom: 10,
     right: 10,
     left:10
   },
   
-  receivedValueContainer:{ 
-
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  receivedValueText: {
-
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  receivedValueInput: {
+  paymentCash:{ 
 
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
+    height: 80,
+  },
+
+  paymentCard:{ 
+
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    height: 80,
+
+  },
+
+  paymentTitleText: {
+
+    fontSize: 16,
+    fontWeight: 'bold',
+    padding: 10,
+    textAlign: 'center',
+    minWidth: 100,
+    maxWidth: 100,
+    
+    backgroundColor: '#eb5432',
+    color: '#fff',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 4,
+  },
+
+  paymentErase: {
+
+    color: 'red',
+  },
+
+  paymentInput:{ 
+
+    padding: 10,
+    marginHorizontal: 6,
+    backgroundColor: 'white',
+    textAlign: 'center',
+    minWidth: 80,
+
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 4,
+  },
+
+  // Modal 
+  modal: {
+
+    flex: 1,
+    maxHeight: 220,
+
+    borderRadius: 12,
+    backgroundColor: 'white',
+    padding: 16,
+  },
+
+  modalTitle: {
+    
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+
+  modalInput: {
+
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 6,
     padding: 6,
-    borderRadius: 5,
-    backgroundColor: 'white',
-    height: 60,
-    width: 90,
-
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginBottom: 12,
   },
 
-  totalValueContainer:{ 
+  modalButtons: {
 
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  
-  totalValueTitle: {
+    marginTop: 10,
 
-    fontSize: 16,
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    left: 16,
+  },
+
+  modalConfirm: {
+
+    backgroundColor: 'green',
+    borderRadius: 12,
+    padding: 8,
+  },
+
+  modalCancel: {
+
+    backgroundColor: 'red',
+    borderRadius: 12,
+    padding: 8,
+  },
+
+  modalButtonsText: {
+
+    color: '#fafafa',
+    fontSize: 14,
     fontWeight: 'bold',
-
   },
-
-  totalValue: {
-
-    backgroundColor: 'white',
-    borderRadius: 5,
-    height: 60,
-    width: 90,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-
+  // END Modal
    // Button styles
    buttonContainer: {
 
