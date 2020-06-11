@@ -40,14 +40,13 @@ export default function Report() {
 
   function getReport(data){
 
-    const compra = orders.filter(order => order.created_at.split(' ', 1) == Moment(data).format('YYYY-MM-DD'));
+    const compra = orders.filter(order => Moment(order.created_at, 'YYYY-MM-DD').format('YYYY-MM-DD') == Moment(data).format('YYYY-MM-DD'));
     
     setOrdersByDay(compra);
-    setTotalOrder(sumObject(compra, 'value', ''));
-    setTotalReceived(sumObject(compra, 'receivedValue', ''));
-    setTotalCash(sumObject(compra, 'value', 'R$'));
-    setTotalCredit(sumObject(compra, 'value', 'CC'));
-    setTotalUnpaid(sumObject(compra, 'value', 'FIADO'));
+    setTotalOrder(sumObject(compra, 'totalValue', ''));
+    setTotalCash(sumObject(compra, 'cashValue', ''));
+    setTotalCredit(sumObject(compra, 'cardValue', ''));
+    setTotalUnpaid(sumObject(compra, 'totalValue', 'FIADO'));
 
     if(compra.length > 0){
     
@@ -62,10 +61,7 @@ export default function Report() {
           order[prod.name] = prod.quantity ;
         });
       });
-
-      console.log(compra);
     }
-
   }
 
   function sumObject (items, prop, type ){
@@ -77,19 +73,9 @@ export default function Report() {
           return a + b[prop];
         }
         
-        else if(type === 'R$') {
-          
-          return b['paymentType'] === type ? a + b[prop] : a;
-        }
-
-        else if(type === 'CC') {
-
-          return b['paymentType'] === type ? a + b[prop] : a;
-        }
-
         else if(type === 'FIADO') {
           
-          return b['paymentType'] === type ? a + b[prop] : a;
+          return b['paymentMode'] === type ? a + b[prop] : a;
         }
 
     }, 0);
@@ -110,7 +96,7 @@ export default function Report() {
         ["Valor Total", totalOrder],
         ["Valor Recebido", totalReceived],
         ["Valor Dinheiro", totalCash],
-        ["Valor Cartão de Credito", totalCredit],
+        ["Valor Cartão", totalCredit],
         ["Valor Fiado", totalUnpaid],
       ], {origin:-1});
 
@@ -190,7 +176,7 @@ export default function Report() {
         <View style={styles.reportSearch}>
         
           <Text style={styles.reportDate}>
-            {Moment(date).format('DD/MM/YYYY')}
+            { ordersByDay.length > 0 ? Moment(date).format('DD/MM/YYYY') : "Escolha uma Data"} 
           </Text>
 
           <TouchableOpacity style={styles.reportCalendar} onPress={showMode}>
