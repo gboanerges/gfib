@@ -51,15 +51,18 @@ export default function Report() {
     if(compra.length > 0){
     
       compra.forEach((order) => {
+        // Fix for warning json parse
+        if(order.products != null){
 
-        let produtos = JSON.parse(order.products);
+        const produtos = JSON.parse(order.products);
+
+        produtos.forEach(prod =>{
+          
+          order[prod.name] = prod.quantity;
+        });
 
         delete order.products;
-
-        produtos.forEach((prod) =>{
-
-          order[prod.name] = prod.quantity ;
-        });
+        }
       });
     }
   }
