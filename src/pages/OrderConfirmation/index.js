@@ -15,14 +15,7 @@ export default function OrderConfirmation() {
 
   // Select with clients available
   
-  const [selectValue, setSelectValue] = useState('Cliente');
-  const selectPlaceholder = {
-
-    label: 'Cliente',
-    value: 'Cliente',
-  }
-
-  const [amountReceived, onChangeAmountReceived] = React.useState(0);
+  const [selectValue, setSelectValue] = useState(0);
 
   const route = useRoute();
   const productParams = route.params.qtd;
@@ -67,21 +60,13 @@ export default function OrderConfirmation() {
     setPaymentIndex(index);
   }
 
-  function payment(type) {
+  function paymentButtons(type) {
 
-    const parsedCash = parseFloat(String(totalCash.value).replace(',','.').replace(' ',''));
-    const parsedCard = parseFloat(String(totalCard.value).replace(',','.').replace(' ',''));
-    
-    console.log('totalCAsh', totalCash);
-    console.log('totalCard', totalCard);
-    console.log(total);
+    console.log('payment buttons', type);
 
     if(type == 'cash'){
 
-      console.log('if cash');
-
       if(totalCard.value == 0){
-        console.log('if totalCard');
 
         setTotalCash({
           
@@ -94,10 +79,9 @@ export default function OrderConfirmation() {
         });
 
       }else if(totalCard.value < total) {
-        console.log('else cash');
         
         const amountLeft = total - totalCard.value;
-        console.log(amountLeft);
+        console.log('CASH amountLeft', amountLeft);
 
         setTotalCash({
         
@@ -126,15 +110,11 @@ export default function OrderConfirmation() {
         });
 
       }else {
-        console.log('\nelse card');
 
         if(totalCash.value < total){
 
-          console.log('total cash', totalCash.value);
-
           const amountLeft = total - totalCash.value;
-          console.log('amount', amountLeft);
-
+          console.log('CARD amountLeft', amountLeft);
           setTotalCard({
           
             value: amountLeft,
@@ -162,15 +142,13 @@ export default function OrderConfirmation() {
   function handleInputCard(event) {
     
     const parsedCard = parseFloat(event.nativeEvent.text.replace(',','.').replace(' ',''));
-    console.log('inputCard valor', parsedCard);
-    console.log('inputCard', isNaN(parsedCard));
-
+    console.log('handle input card', parsedCard);
     // Sets total card values only if the given input value is number
     if(!isNaN(parsedCard)){
 
       setTotalCard({
         
-        ...totalCard,
+        value: parsedCard,
         formatedValue: formatIntl(parsedCard),
       })
     }else {
@@ -190,7 +168,7 @@ export default function OrderConfirmation() {
 
       setTotalCash({
         
-        ...totalCash,
+        value: parsedCash,
         formatedValue: formatIntl(parsedCash),
       })
     } else {
@@ -215,17 +193,100 @@ export default function OrderConfirmation() {
       { cancelable: false }
     );
   }
+  
+  function alertClientOrder (clientData) {
+
+    Alert.alert(
+      `Pagamento ${clientData.paymentType}`,
+      "Confirmar a compra?",
+      [
+        {
+          text: "Não",
+          style: "cancel"
+        },
+        { 
+          text: "SIM",
+          
+          onPress: () => confirmClientOrder(clientData)
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  async function confirmClientOrder(clientData) {
+
+    await api.post('orders', clientData);
+
+    navigateToHome();
+    confirmMsgs('', 'Compra realizada com sucesso!');
+  }
 
   async function confirmOrder(){
 
     // setting constants to match attributes of table order
-    const receivedValue = parseFloat(amountReceived.replace(',','.').replace(' ',''));
+    const cashValue = totalCash.value;
+    const cardValue = totalCard.value;
+    const totalValue = total; 
+
+    const receivedValue = Number(cardValue) + Number(cashValue);
+
     const client = selectValue;
-    const paymentType = buttons[paymentIndex];
-    const value = total; 
 
-    const debt = total - receivedValue;
+    let paymentType = '';
 
+    const types = {
+
+      lessThanTotal: 'MENOR',
+      greaterThanTotal: 'MAIOR',
+      full: 'TOTAL',
+      zero: 'NULO'
+    };
+
+    let paymentMode = '';
+
+    const payments = {
+
+      cash: 'DINHEIRO',
+      card: 'CARTÃO',
+      cashCard: 'DINHEIRO/CARTÃO',
+      zero: 'FIADO'
+    };
+
+    /*
+      Checks values of cash and card inputs,
+      to set the correct paymentMode
+    */
+    if(Number(cashValue) == 0 && Number(cardValue) == 0) {
+
+      paymentMode = payments.zero;
+    }  
+    else if(Number(cashValue) > 0) {
+
+      if (Number(cardValue) > 0) {
+
+        paymentMode = payments.cashCard;
+
+      }else{
+
+        paymentMode = payments.cash;
+      }
+    } 
+    
+    else if (Number(cardValue) > 0) {
+
+      if (Number(cashValue) > 0) {
+
+        paymentMode = payments.cashCard;
+
+      }else{
+
+        paymentMode = payments.card;
+
+      }
+    }
+
+    const debtOrder = totalValue - receivedValue;
     // Map only product name and quant
     const productMap = productParams.map((product) => {
       return (
@@ -233,84 +294,81 @@ export default function OrderConfirmation() {
       ) 
     });
 
-    // Transform into String to save in db
+    // Transform products JSON into String to save in db
     const products = JSON.stringify(productMap);
     
-    if(client === 'Cliente'){
+    // Normal client selected, standard procedure 
+    if(client == 0){
 
-      if( debt > 0){
+      if( debtOrder > 0){
 
-        confirmMsgs('Valor recebido:', 'Valor recebido precisa ser igual ao total correto'
+        confirmMsgs('Dinheiro recebido a menos:', 'Valor recebido, dinheiro/cartão precisa ser igual ao total'
         +'\nSelecione o cliente na lista');
 
-      }else if(debt < 0){
+      }else if(debtOrder < 0){
           
         confirmMsgs('Valor recebido a Mais:', 'Valor recebido EXCEDE o total da compra');
       }
       else{
 
-        if(paymentType != 'FIADO' ){
-
           await api.post('orders', {
 
             products,
-            value,
-            paymentType,
-            receivedValue,
-            client
+            paymentType: types.full,
+            paymentMode,
+            cashValue,
+            cardValue,
+            totalValue,
+            client,
           });
          
           navigateToHome();
           confirmMsgs('', 'Compra realizada com sucesso!');
-
-        }else {
-
-          confirmMsgs('Tipo de Pagamento Errado', 'Selecione R$ ou CC.');
-          
-        }
       }
     }
 
     else{
       
-      console.log('Nome do comprador ===', selectValue);
+       // Received value equals ZERO, unpaid order
+      if(debtOrder == totalValue){
 
-      // Total <= receivedValue
-      if( debt <= 0){
-        
-        confirmMsgs('Valor recebido Incorreto!', 'Não há débito. Selecione a opção: Cliente');
-        console.log('Não há débito. Selecione a opção: Cliente');
+        paymentType = types.zero; 
       }
-      
-      // Total > received
-      else{
 
-        if(paymentType != 'FIADO'){
+      // Received Value LESS than Total
+      else if(debtOrder > 0) {
 
-          console.log('Selecione o Tipo de Pagamento FIADO');
-          confirmMsgs('Tipo de Pagamento Incorreto!', 'Selecione a opção: FIADO');
-
-        }else {
-
-          await api.post('orders', {
-
-            products,
-            value,
-            paymentType,
-            receivedValue,
-            client
-          });
-
-          navigateToHome();
-          confirmMsgs('', 'Compra realizada com sucesso!');
-
-        }
+        paymentType = types.lessThanTotal; 
       }
+
+      // Received Value GREATER than Total
+      else if (debtOrder < 0){
+
+        paymentType = types.greaterThanTotal; 
+      }
+
+      // Debt value equals zero, totally paid order
+      else {
+
+        paymentType = types.full; 
+      }
+
+      const clientData = {
+
+        products,
+        paymentType,
+        paymentMode,
+        cashValue,
+        cardValue,
+        totalValue,
+        client,
+      };
+
+      alertClientOrder(clientData);
     }
-    
   }
 
-  const confirmButtonAlert = () =>
+  const confirmOrderButton = () =>
     Alert.alert(
       "Confirmar Compra",
       "Deseja confirmar a compra?",
@@ -350,7 +408,7 @@ export default function OrderConfirmation() {
   const [newClient, setNewClient] = useState(0);
 
   // Add new client on db
-  async function modalConfirm(){
+  async function modalAddClient(){
 
     onChangeClientName('');
 
@@ -378,6 +436,7 @@ export default function OrderConfirmation() {
     }
   }
 
+  // Reloading client list after add new one
   useEffect(() => {
 
     api.get('clients').then(response => (setClients(response.data)));
@@ -418,10 +477,9 @@ export default function OrderConfirmation() {
               }}
               placeholder={{
                 label: 'Cliente',
-                value: 'Cliente',
+                value: '0',
                 color: 'red',}
               }
-              value={selectValue}
               useNativeAndroidPickerStyle={false}
               onValueChange={(itemValue, itemIndex) => setSelectValue(itemValue)}
               items={
@@ -429,7 +487,7 @@ export default function OrderConfirmation() {
                 clients.map((client) => {
                   return (
                     
-                    {label: client.name, value:client.name, itemKey: client.id}
+                    {label: client.name, value:client.id, itemKey: client.id}
                     ) 
                   })
                 }
@@ -536,7 +594,7 @@ export default function OrderConfirmation() {
 
           <View style={styles.paymentCash}>
 
-            <TouchableOpacity onPress={() => payment('cash')}>
+            <TouchableOpacity onPress={() => paymentButtons('cash')}>
               <Text style={styles.paymentTitleText}>
                 Dinheiro
               </Text>
@@ -571,7 +629,7 @@ export default function OrderConfirmation() {
 
           <View style={styles.paymentCard}>
 
-            <TouchableOpacity onPress={() => payment('card')}>
+            <TouchableOpacity onPress={() => paymentButtons('card')}>
               <Text style={styles.paymentTitleText}>
                 Cartão
               </Text>
@@ -581,7 +639,7 @@ export default function OrderConfirmation() {
               style={styles.paymentInput}
 
               onTouchStart={() => setTotalCard({
-                value: '' , formatedValue: ''
+                value: 0 , formatedValue: ''
               })}
 
               onEndEditing={handleInputCard}
@@ -613,7 +671,7 @@ export default function OrderConfirmation() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.confirmButton} onPress={confirmButtonAlert}>
+        <TouchableOpacity style={styles.confirmButton} onPress={confirmOrderButton}>
           <Text style={styles.orderButtons}>
             Finalizar
           </Text>
@@ -636,7 +694,7 @@ export default function OrderConfirmation() {
               <Text style={styles.modalButtonsText}>Cancelar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.modalConfirm} onPress={modalConfirm}>
+            <TouchableOpacity style={styles.modalConfirm} onPress={modalAddClient}>
               <Text style={styles.modalButtonsText}>Confirmar</Text>
             </TouchableOpacity>
           </View>
