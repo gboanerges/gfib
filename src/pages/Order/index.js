@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, TouchableOpacity } from 'react-native';
+import { Alert, View, FlatList, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 
@@ -22,17 +22,38 @@ export default function Order() {
 
   function navigateToConfirm(){
 
-    navigation.navigate('OrderConfirmation', {
+    const productSelect = products.filter(product => product.qtd > 0 );
+    
+    // Check if at least 1 item has been added
+    if (productSelect.length > 0) {
       
-      qtd,
-      total,
-      clients,
-    }); 
+      navigation.navigate('OrderConfirmation', {
+      
+        qtd,
+        total,
+     }); 
+    }
+
+    else {
+      
+      Alert.alert(
+        `Compra sem Produtos`,
+        "Adicione pelo menos um item.",
+        [
+          
+          { 
+            text: "OK",
+            
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+    
   }
 
   // Load all products available
   const [products, setProducts] = useState([]);
-  const [clients, setClients] = useState([]);
 
   async function loadProducts(){
 
@@ -42,21 +63,14 @@ export default function Order() {
     setQtd(response.data);
   }
 
-  async function loadClients(){
-
-    const response = await api.get('clients');
-    setClients(response.data);
-  }
-  
   useEffect (() => {
 
     loadProducts(); 
-    loadClients();
     setTotal(0);
   }, [])
 
 
-  function quantity(type, price, id){
+  function handleQuantity(type, price, id){
     
     const prod = qtd.filter(produto => produto.id === id);
 
@@ -135,7 +149,7 @@ export default function Order() {
               {product.name}
             </Text>
 
-            <TouchableOpacity onPress={() => quantity(2, product.price, product.id)}>
+            <TouchableOpacity onPress={() => handleQuantity(2, product.price, product.id)}>
               <Feather name="minus" size={32} color="#EB5757"/>
             </TouchableOpacity>
 
@@ -146,7 +160,7 @@ export default function Order() {
               </Text>
             </View>
 
-            <TouchableOpacity onPress={() => quantity(1,product.price, product.id)}>
+            <TouchableOpacity onPress={() => handleQuantity(1,product.price, product.id)}>
               <Feather name="plus" size={32} color="#EB5757"/>
             </TouchableOpacity>
           </View>
@@ -155,7 +169,7 @@ export default function Order() {
       
       <View style={styles.buttonContainer}>
 
-        <TouchableOpacity style={styles.eraseButton} onPress={() => quantity(3, '', '')}>
+        <TouchableOpacity style={styles.eraseButton} onPress={() => handleQuantity(3, '', '')}>
           <Text style={styles.orderButtons}>
             Apagar
           </Text>
