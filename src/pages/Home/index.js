@@ -11,16 +11,6 @@ export default function Home() {
 
   const navigation = useNavigation();
 
-  function navigateToOrder(){
-
-    navigation.navigate('Order');
-  }
-
-  function navigateToClientArea(){
-
-    navigation.navigate('ClientArea');
-  }
-
   function navigateTo(option){
 
     switch (option) {
