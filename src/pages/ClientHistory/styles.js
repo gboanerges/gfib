@@ -35,6 +35,13 @@ export default StyleSheet.create({
     maxHeight: 590,
   },
   
+  clientList: {
+
+    padding: 4,
+    flex: 1,
+    
+  },
+
   clientTags: {
 
     flexDirection: 'row',
@@ -49,8 +56,6 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     padding: 6,
-    
-
   },
 
   clientDebt: {
@@ -69,7 +74,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     padding: 6,
     backgroundColor: '#faa',
-    marginTop: 8,
+    marginTop: 4,
     borderRadius: 6,
   },
 
@@ -94,38 +99,12 @@ export default StyleSheet.create({
 
   },
   
-  toggleUnpaid: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-
-    padding: 4,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: 'gray',
-    marginVertical: 10,
-  },
-
-  togglePaid: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-
-    padding: 4,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: 'gray',
-    marginVertical: 10,
-  },
-
   unpaidTags: {
 
     flexDirection: 'row',
     justifyContent: 'space-around',
     
-    backgroundColor: '#fafaaa',
+    backgroundColor: '#DCDCDC',
     borderRadius: 4,
     padding: 6,
   },
@@ -149,28 +128,19 @@ export default StyleSheet.create({
   modal: {
 
     flex: 1,
-    maxHeight: 220,
+    maxHeight: 260,
 
     borderRadius: 12,
     backgroundColor: 'white',
-    padding: 16,
+    padding: 8,
   },
 
   modalTitle: {
     
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 16,
+    
     textAlign: 'center',
-  },
-
-  modalInput: {
-
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 6,
-    padding: 6,
-    marginBottom: 12,
   },
 
   modalButtons: {
@@ -206,6 +176,66 @@ export default StyleSheet.create({
     fontWeight: 'bold',
   },
   // END Modal
+
+  
+  // payment Container
+  containerPayment: {
+
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 8,
+  },
+  
+  paymentCash:{ 
+
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    height: 80,
+  },
+
+  paymentCard:{ 
+
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    height: 80,
+
+  },
+
+  paymentTitleText: {
+
+    fontSize: 16,
+    fontWeight: 'bold',
+    padding: 10,
+    textAlign: 'center',
+    minWidth: 100,
+    maxWidth: 100,
+    
+    backgroundColor: '#eb5432',
+    color: '#fff',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 4,
+  },
+
+  paymentErase: {
+
+    color: 'red',
+  },
+
+  paymentInput:{ 
+
+    padding: 10,
+    marginHorizontal: 6,
+    backgroundColor: 'white',
+    textAlign: 'center',
+    minWidth: 80,
+
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 4,
+  },
 
   // Button Styles
   buttonContainer: {

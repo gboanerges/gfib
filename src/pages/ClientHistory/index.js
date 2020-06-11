@@ -16,11 +16,24 @@ export default function ClientHistory() {
   function navigateClientArea(){
 
     navigation.navigate('ClientArea'); 
+  } 
+  
+  // Modal usage
+  const [isModalVisible, setModalVisible] = useState(false);
+  function toggleModal() {
 
-  }
+    setCashValue({ 
 
-  const [toggleUnpaid, setToggleUnpaid] = useState(true);
-  const [togglePaid, setTogglePaid] = useState(true);
+      value: 0, formatedValue: 'R$0,00',
+    });
+
+    setCardValue({ 
+
+      value: 0, formatedValue: 'R$0,00',
+    });
+
+    setModalVisible(!isModalVisible);
+  };
 
   function confirmPaymentAlert(order) {
     console.log('ALERT', order.value);
@@ -42,57 +55,230 @@ export default function ClientHistory() {
     );
   }
 
-  async function confirmPayment(order){
+  async function confirmPayment(){
 
-    console.log('CONFIRM', order.id);
-    console.log('CONFIRM client', clientId);
-    // Paying the whole order at once
-    await api.put(`orders/${order.id}`, {
+    let paymentMode = '';
 
-      idClient: clientId,
-      value: order.value
-    });
+    const payments = {
 
-    setUpdateOrder(updateOrder + 1);
+      cash: 'DINHEIRO',
+      card: 'CARTÃO',
+      cashCard: 'DINHEIRO/CARTÃO',
+      zero: 'FIADO'
+    };
 
+    if(Number(cashValue.value) == 0 && Number(cardValue.value) == 0) {
+
+      paymentMode = payments.zero;
+    }  
+    else if(Number(cashValue.value) > 0) {
+
+      if (Number(cardValue.value) > 0) {
+
+        paymentMode = payments.cashCard;
+
+      }else{
+
+        paymentMode = payments.cash;
+      }
+    } 
+    
+    else if (Number(cardValue.value) > 0) {
+
+      if (Number(cashValue.value) > 0) {
+
+        paymentMode = payments.cashCard;
+
+      }else{
+
+        paymentMode = payments.card;
+
+      }
+    }
+    console.log('payment', paymentMode);
+    const paymentData = {
+
+      products: '[{\"name\":\"Coxinha\",\"quantity\":0},{\"name\":\"Croquete\",\"quantity\":0},{\"name\":\"Empada Frango\",\"quantity\":0},{\"name\":\"Empada Bacalhau\",\"quantity\":0},{\"name\":\"Esfiha Carne\",\"quantity\":0},{\"name\":\"Esfiha Frango\",\"quantity\":0},{\"name\":\"Pãozinho\",\"quantity\":0},{\"name\":\"Pastel Forno\",\"quantity\":0},{\"name\":\"Pastel Frito\",\"quantity\":0},{\"name\":\"Quibe\",\"quantity\":0},{\"name\":\"Risole\",\"quantity\":0},{\"name\":\"Saltenha\",\"quantity\":0},{\"name\":\"Tortalete\",\"quantity\":0},{\"name\":\"Torta Doce\",\"quantity\":0},{\"name\":\"Torta Salgada\",\"quantity\":0},{\"name\":\"Refris\",\"quantity\":0},{\"name\":\"Refri Coca\",\"quantity\":0},{\"name\":\"Água Mineral\",\"quantity\":0},{\"name\":\"Suco\",\"quantity\":0}]',
+      totalValue: (Number(cashValue.value) + Number(cardValue.value)),
+      cashValue: cashValue.value,
+      cardValue: cardValue.value,
+      client: clientId,
+      paymentMode,
+      paymentType: "DÍVIDA",
+    };
+
+    console.log(paymentData);
+    await api.post('orders', paymentData);
+
+    // await api.put(`clients/${clientId}`, {
+
+    //   name: "",
+    //   debt: (Number(cashValue.value) + Number(cardValue.value)),
+    // });
+
+    setModalVisible(!isModalVisible);
+    setUpdatePage(updatePage + 1);
   }
 
   const route = useRoute();
-  const clientName = route.params.name;
   const clientId = route.params.id;
 
   async function loadData(){
 
-    const response = await api.get(`orders/${clientId}`);
-    
-    setClientUnpaidHistory(response.data.filter(order => order.receivedValue < order.value));
-    
-    setClientPaidHistory(response.data.filter(order => order.receivedValue == order.value));
+    const clientResponse = await api.get(`clients/${clientId}`);
 
-    // ALTERAR FUNÇÃO
-    setClientDebt(sumObject(response.data.filter(order => order.receivedValue < order.value), 'value'));
+    const orderResponse = await api.get(`orders/${clientId}`);
+    
+    setClientHistory(orderResponse.data);
+    setClientName(clientResponse.data[0].name);
+    setClientDebt(clientResponse.data[0].debt);
     
   }
   
-  const [clientUnpaidHistory, setClientUnpaidHistory] = useState([]);
-  const [clientPaidHistory, setClientPaidHistory] = useState([]);
+  const [clientHistory, setClientHistory] = useState([]);
+
   // Dependency test for useEffect to load new product added
-  const [updateOrder, setUpdateOrder] = useState(0);
+  const [updatePage, setUpdatePage] = useState(0);
+
+  const [clientName, setClientName] = useState('');
   const [clientDebt, setClientDebt] = useState(0);
 
-  function sumObject (items, prop){
-    // A == 0 and b is the object, access prop passed
-    return items.reduce( function(a, b){
+  const [cardValue, setCardValue] = useState({
 
-      return a + b[prop];
-    }, 0);
+    value: 0, formatedValue: 'R$0,00',
+  });
+  const [cashValue, setCashValue] = useState({
+
+    value: 0, formatedValue: 'R$0,00',
+  });
+
+  function formatIntl(value){
+
+    const formatedValue = Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
+
+    return formatedValue;
+  }
+
+  function handleInputCard(event) {
+    
+    const parsedCard = parseFloat(event.nativeEvent.text.replace(',','.').replace(' ',''));
+
+    // Sets total card values only if the given input value is number
+    if(!isNaN(parsedCard)){
+
+      setCardValue({
+        
+        value: parsedCard,
+        formatedValue: formatIntl(parsedCard),
+      })
+    }else {
+      setCardValue({
+        
+        value: 0,
+        formatedValue: formatIntl(0),
+      })
+    }
+  }
+
+  function handleInputCash(event) {
+    
+    const parsedCash = parseFloat(event.nativeEvent.text.replace(',','.').replace(' ',''));
+   
+    if(!isNaN(parsedCash)){
+
+      setCashValue({
+        
+        value: parsedCash,
+        formatedValue: formatIntl(parsedCash),
+      });
+    } else {
+      setCashValue({
+        
+        value: 0,
+        formatedValue: formatIntl(0),
+      });
+    }
+  }
+
+  function paymentButtons(type) {
+
+    const parsedCash = parseFloat(String(cashValue.value).replace(',','.').replace(' ',''));
+    const parsedCard = parseFloat(String(cardValue.value).replace(',','.').replace(' ',''));
+
+    const total = clientDebt;
+
+    if(type == 'cash'){
+
+      if(cardValue.value == 0){
+
+        setCashValue({
+          
+          value: total,
+          formatedValue: Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(total),
+
+        });
+
+      }else if(cardValue.value < total) {
+        
+        const amountLeft = total - cardValue.value;
+
+        setCashValue({
+        
+          value: amountLeft,
+          formatedValue: Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(amountLeft),
+
+        });
+        
+      }
+    }
+    else if (type == 'card'){
+
+      if(cashValue.value == 0){
+
+        setCardValue({
+          
+          value: total,
+          formatedValue: Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(total),
+
+        });
+
+      }else {
+
+        if(cashValue.value < total){
+
+          const amountLeft = total - cashValue.value;
+
+          setCardValue({
+          
+            value: amountLeft,
+            formatedValue: Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            }).format(amountLeft),
+  
+          });
+        }
+      }
+    }
   }
 
   // Load client orders from db
   useEffect (() => {
 
     loadData();
-  }, [updateOrder])
+  }, [updatePage])
 
   return (
 
@@ -129,27 +315,9 @@ export default function ClientHistory() {
           <Text></Text>
         </View>
         
-        { clientUnpaidHistory.length > 0 || clientPaidHistory.length > 0 ?
+        { clientHistory.length > 0 ?
         
-        <View>
-          
-          <TouchableOpacity style={styles.clientButton} onPress={() => setToggleUnpaid(!toggleUnpaid)}>
-            <View style={styles.togglePaid}>
-              <Text>
-                A pagar
-              </Text>
-
-              { toggleUnpaid ? 
-
-                <Feather name="chevrons-up" size={32} color="#EB5757"/>
-                
-                : <Feather name="chevrons-down" size={32} color="#EB5757"/>
-              }
-            </View>
-          </TouchableOpacity>
-          
-          { toggleUnpaid && clientUnpaidHistory. length > 0 ? 
-          <View>
+          <View style={{ flex:1 }}>
             <View style={styles.unpaidTags}>
 
               <Text style={[styles.unpaidTagsText]}>
@@ -169,7 +337,7 @@ export default function ClientHistory() {
               
             <FlatList 
               style={[styles.clientList, { marginTop: 0 }]}
-              data={clientUnpaidHistory}
+              data={clientHistory}
               keyExtractor={order => String(order.id)}
               showsVerticalScrollIndicator={false}
               renderItem={({ item: order }) => (
@@ -177,94 +345,119 @@ export default function ClientHistory() {
                 <View style={styles.order}>
 
                   <Text style={styles.orderDate}>
-                    {Moment(order.created_at).format('DD/MM/YY')}
+                    {Moment(order.created_at, 'YYYY-MM-DD').format('DD/MM/YY')}
+
                   </Text>
                   <Text style={styles.orderValue}>
                     {Intl.NumberFormat('pt-BR', { 
                       style: 'currency',
                       currency: 'BRL',
-                    }).format(order.value)}
+                    }).format(order.totalValue)}
                   </Text>
 
                   <Text style={styles.orderValue}>
                     {Intl.NumberFormat('pt-BR', { 
                       style: 'currency',
                       currency: 'BRL',
-                    }).format(order.receivedValue)}
+                    }).format(order.cashValue + order.cardValue)}
                   </Text>
 
-                  <TouchableOpacity style={[styles.clientButton, { backgroundColor: 'white'}]} onPress={() => confirmPaymentAlert(order)}>
-                    <Feather name="dollar-sign" size={32} color="#EB5757"/>
+                  <TouchableOpacity style={[styles.clientButton, { backgroundColor: 'white'}]} onPress={() => {}}>
+                    <Feather name="chevron-down" size={26} color="#EB5757"/>
                   </TouchableOpacity>
                 </View>
               )}
             />
           </View>
 
-            : null }      
-
-              <TouchableOpacity style={styles.clientButton} onPress={() => setTogglePaid(!togglePaid)}>
-                <View style={styles.togglePaid}>
-                  <Text>
-                    Compras pagas
-                  </Text>
-
-                  { togglePaid ? 
-                      <Feather name="chevrons-up" size={32} color="#EB5757"/>
-                    
-                    : <Feather name="chevrons-down" size={32} color="#EB5757"/>
-                  }
-                </View>
-              </TouchableOpacity>
-              
-              { togglePaid && clientPaidHistory.length > 0 ? 
-                <View>
-                  <View style={styles.unpaidTags}>
-
-                    <Text style={[styles.unpaidTagsText]}>
-                      Data
-                    </Text>
-                    
-                    <Text style={styles.unpaidTagsText}>
-                      Valor Total
-                    </Text>
-
-                    <Text style={styles.unpaidTagsText}>
-                      Data Recebido
-                    </Text>
-
-                  </View>
-                    
-                  <FlatList 
-                    style={[styles.clientList, { marginTop: 0 }]}
-                    data={clientPaidHistory}
-                    keyExtractor={order => String(order.id)}
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item: order }) => (
-
-                      <View style={styles.order}>
-
-                        <Text style={styles.orderDate}>
-                          {Moment(order.created_at).format('DD/MM/YY')}
-                        </Text>
-                        <Text style={styles.orderValue}>
-                          {Intl.NumberFormat('pt-BR', { 
-                            style: 'currency',
-                            currency: 'BRL',
-                          }).format(order.value)}
-                        </Text>
-
-                        <Text style={styles.orderValue}>
-                          Data 
-                        </Text>
-                          
-                      </View>
-                    )}
-                  />
-                </View>
-                : null}      
-        </View>
           : <Text style={styles.warningOrder}>Não há histórico de compras</Text> }
+
+        <Modal isVisible={isModalVisible}>
+          <View style={styles.modal}>
+
+            <Text style={styles.modalTitle}>Pagamento</Text>
+
+            <View style={styles.containerPayment}>
+
+              <View style={styles.paymentCash}>
+
+                <TouchableOpacity onPress={() => paymentButtons('cash')}>
+                  <Text style={styles.paymentTitleText}>
+                    Dinheiro
+                  </Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  id="cashInput"
+                  style={styles.paymentInput}
+                  keyboardType={'numeric'}
+
+                  onTouchStart={() => setCashValue({
+                    value: '' , formatedValue: ''
+                  })}
+    
+                  onEndEditing={handleInputCash}
+    
+                  onChangeText={text => setCashValue({
+                    value: text,
+                    formatedValue: text,
+                  })}
+                  value={String(cashValue.formatedValue)}
+                />  
+
+                <TouchableOpacity onPress={() => setCashValue({
+                  value: 0, formatedValue: formatIntl(0)
+                })}>
+
+                  <Feather style={styles.paymentErase} name="x-circle" size={25} />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.paymentCard}>
+
+                <TouchableOpacity onPress={() => paymentButtons('card')}>
+                  <Text style={styles.paymentTitleText}>
+                    Cartão
+                  </Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles.paymentInput}
+                  keyboardType={'numeric'}
+
+                  onTouchStart={() => setCardValue({
+                    value: '' , formatedValue: ''
+                  })}
+    
+                  onEndEditing={handleInputCard}
+    
+                  onChangeText={text => setCardValue({
+                    value: text,
+                    formatedValue: text,
+                  })}
+                  value={String(cardValue.formatedValue)}
+                />
+
+                <TouchableOpacity onPress={() => setCardValue({
+                  value: 0, formatedValue: formatIntl(0)
+                })}>
+
+                  <Feather style={styles.paymentErase} name="x-circle" size={25} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalCancel} onPress={toggleModal}>
+                <Text style={styles.modalButtonsText}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.modalConfirm} onPress={confirmPayment}>
+                <Text style={styles.modalButtonsText}>Confirmar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -275,9 +468,9 @@ export default function ClientHistory() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.confirmButton} onPress={()=>{}}>
+        <TouchableOpacity style={styles.confirmButton} onPress={toggleModal}>
           <Text style={styles.buttonText}>
-            Cadastrar
+            Pagamento
           </Text>
         </TouchableOpacity>
       </View>
