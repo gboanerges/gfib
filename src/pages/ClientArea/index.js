@@ -29,55 +29,6 @@ export default function ClientArea() {
     });
   }
 
-  function clientDeleteAlert(id, debt){
-
-    if(debt != 0){
-
-      Alert.alert(
-        "Erro ao deletar cliente",
-        "\nCliente referido tem contas a pagar.",
-        [
-          
-          { 
-            text: "OK",
-            
-            onPress: () => {}
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-    else{
-
-      Alert.alert(
-        "Confirmar remoção de cliente",
-        "\nDeseja realmente deletar este cliente?",
-        [
-          {
-            text: "Não",
-            style: "cancel"
-          },
-          { 
-            text: "OK",
-            
-            onPress: () => clientDelete(id)
-          }
-        ],
-        { cancelable: false }
-      );
-     
-    }
-
-  }
-
-  async function clientDelete(id){
-
-    console.log('cliente delete', id);
-    await api.delete(`clients/${id}`);
-    
-    setNewClient(newClient + 1);
-  }
-
   const [clients, setClients] = useState([]);
 
   async function loadData(){
@@ -88,42 +39,85 @@ export default function ClientArea() {
   }
    
   // Modal usage
-  const [isModalVisible, setModalVisible] = useState(false);
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  const [isModalRegisterVisible, setModalRegisterVisible] = useState(false);
+  const toggleModalRegister = () => {
+    setModalRegisterVisible(!isModalRegisterVisible);
+  };
+
+  const [isModalUpdateVisible, setModalUpdateVisible] = useState(false);
+  function toggleModalUpdate(id){
+    
+    setModalUpdateVisible(!isModalUpdateVisible);
+    setClientIdUpdate(id);
   };
 
   // Dependency test for useEffect to load new product added
   const [newClient, setNewClient] = useState(0);
 
-  const [clientName, onChangeClientName] = useState('');
+  const [clientNameRegister, setClientNameRegister] = useState('');
+  const [clientNameUpdate, setClientNameUpdate] = useState('');
+  const [clientIdUpdate, setClientIdUpdate] = useState(0);
 
   // Add new client on db
-  async function modalConfirm(){
+  async function modalConfirm(operation){
 
-    onChangeClientName('');
+    setClientNameRegister('');
+    setClientNameUpdate('');
 
-    if(clientName == ''){
+    if(operation == 'register'){
+
+      if(clientNameRegister == ''){
       
-      Alert.alert(
-        "Erro ao cadastrar cliente",
-        "Digite algum nome para o cliente",
-        [
-          { 
-            text: "OK",
-            
-            onPress: () => {}
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-    else{
+        Alert.alert(
+          "Erro ao cadastrar cliente",
+          "Digite algum nome para o cliente",
+          [
+            { 
+              text: "OK",
+              
+              onPress: () => {}
+            }
+          ],
+          { cancelable: false }
+        );
+      }
+      else{
 
-      await api.post('clients', {clientName});
-    
-      setModalVisible(!isModalVisible);
-      setNewClient(newClient + 1);
+        await api.post('clients', {
+          clientName: clientNameRegister
+        });
+      
+        setModalRegisterVisible(!isModalRegisterVisible);
+        setNewClient(newClient + 1);
+      }
+    }
+    else if(operation == 'update') {
+
+      if(clientNameUpdate == ''){
+      
+        Alert.alert(
+          "Erro ao atualizar cliente",
+          "Digite algum nome",
+          [
+            { 
+              text: "OK",
+              
+              onPress: () => {}
+            }
+          ],
+          { cancelable: false }
+        );
+      } else {
+
+        await api.put(`clients/${clientIdUpdate}`, {
+
+          name: clientNameUpdate,
+          debt: '',
+        });
+
+        setModalUpdateVisible(!isModalUpdateVisible);
+        setNewClient(newClient + 1);
+      }
     }
   }
 
@@ -184,8 +178,8 @@ export default function ClientArea() {
                 }).format(client.debt)}
               </Text>
 
-              <TouchableOpacity style={styles.clientButton} onPress={() => clientDeleteAlert(client.id, client.debt)}>
-                <Feather name="trash-2" size={32} color="#EB5757"/>
+              <TouchableOpacity style={styles.clientButton} onPress={() => toggleModalUpdate(client.id)}>
+                <Feather name="edit" size={26} color="#EB5757"/>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.clientButton} onPress={() => clientHistory(client)}>
@@ -203,13 +197,14 @@ export default function ClientArea() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.confirmButton} onPress={toggleModal}>
+        <TouchableOpacity style={styles.confirmButton} onPress={toggleModalRegister}>
           <Text style={styles.buttonText}>
             Cadastrar
           </Text>
         </TouchableOpacity>
       </View>
-      <Modal isVisible={isModalVisible}>
+
+      <Modal isVisible={isModalRegisterVisible}>
         <View style={styles.modal}>
 
           <Text style={styles.modalTitle}>Cadastro de Cliente</Text>
@@ -217,15 +212,38 @@ export default function ClientArea() {
           <TextInput
             style={styles.modalInput}
             placeholder="Nome do Cliente"
-            onChangeText={text => onChangeClientName(text)}  
+            onChangeText={text => setClientNameRegister(text)}  
           />
 
           <View style={styles.modalButtons}>
-            <TouchableOpacity style={styles.modalCancel} onPress={toggleModal}>
+            <TouchableOpacity style={styles.modalCancel} onPress={toggleModalRegister}>
               <Text style={styles.modalButtonsText}>Cancelar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.modalConfirm} onPress={modalConfirm}>
+            <TouchableOpacity style={styles.modalConfirm} onPress={() => modalConfirm('register')}>
+              <Text style={styles.modalButtonsText}>Confirmar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal isVisible={isModalUpdateVisible}>
+        <View style={styles.modal}>
+
+          <Text style={styles.modalTitle}>Alterar Nome do Cliente</Text>
+
+          <TextInput
+            style={styles.modalInput}
+            placeholder="Nome do Cliente"
+            onChangeText={text => setClientNameUpdate(text)}  
+          />
+
+          <View style={styles.modalButtons}>
+            <TouchableOpacity style={styles.modalCancel} onPress={toggleModalUpdate}>
+              <Text style={styles.modalButtonsText}>Cancelar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.modalConfirm} onPress={() => modalConfirm('update')}>
               <Text style={styles.modalButtonsText}>Confirmar</Text>
             </TouchableOpacity>
           </View>
