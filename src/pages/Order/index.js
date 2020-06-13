@@ -149,7 +149,7 @@ export default function Order() {
               {product.name}
             </Text>
 
-            <TouchableOpacity onPress={() => handleQuantity(2, product.price, product.id)}>
+            <TouchableOpacity style={styles.productButtons} onPress={() => handleQuantity(2, product.price, product.id)}>
               <Feather name="minus" size={32} color="#EB5757"/>
             </TouchableOpacity>
 
@@ -160,7 +160,7 @@ export default function Order() {
               </Text>
             </View>
 
-            <TouchableOpacity onPress={() => handleQuantity(1,product.price, product.id)}>
+            <TouchableOpacity style={styles.productButtons} onPress={() => handleQuantity(1,product.price, product.id)}>
               <Feather name="plus" size={32} color="#EB5757"/>
             </TouchableOpacity>
           </View>
@@ -168,6 +168,15 @@ export default function Order() {
       />
       
       <View style={styles.buttonContainer}>
+
+        <TouchableOpacity style={[styles.confirmButton,
+        {
+          backgroundColor: '#aaafff' ,
+        }]} onPress={navigateToHome}>
+          <Text style={styles.orderButtons}>
+            Voltar
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.eraseButton} onPress={() => handleQuantity(3, '', '')}>
           <Text style={styles.orderButtons}>

@@ -50,8 +50,8 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    padding: 12,
-    marginBottom: 16,
+    padding: 10,
+    marginBottom: 8,
     borderRadius: 8,
     backgroundColor: '#FFF',
   },
@@ -60,6 +60,7 @@ export default StyleSheet.create({
 
     fontSize: 20,
     fontWeight: 'bold',
+    minWidth: 170,
   },
 
   productQuant: {
@@ -76,6 +77,13 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#EF5757',
+  },
+
+  productButtons: {
+
+    borderColor: '#EF5757',
+    borderWidth: 2,
+    borderRadius: 40,
   },
 
   buttonContainer: {
