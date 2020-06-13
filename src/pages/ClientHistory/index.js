@@ -35,8 +35,8 @@ export default function ClientHistory() {
     setModalVisible(!isModalVisible);
   };
 
-  function confirmPaymentAlert(order) {
-    console.log('ALERT', order.value);
+  function confirmPaymentAlert() {
+
     Alert.alert(
       "Confirmação de pagamento",
       "Deseja confirmar o pagamento desta compra?",
@@ -48,7 +48,7 @@ export default function ClientHistory() {
         { 
           text: "SIM",
           
-          onPress: () => confirmPayment(order)
+          onPress: () => confirmPayment()
         }
       ],
       { cancelable: false }
@@ -95,7 +95,7 @@ export default function ClientHistory() {
 
       }
     }
-    console.log('payment', paymentMode);
+
     const paymentData = {
 
       products: '[{\"name\":\"Coxinha\",\"quantity\":0},{\"name\":\"Croquete\",\"quantity\":0},{\"name\":\"Empada Frango\",\"quantity\":0},{\"name\":\"Empada Bacalhau\",\"quantity\":0},{\"name\":\"Esfiha Carne\",\"quantity\":0},{\"name\":\"Esfiha Frango\",\"quantity\":0},{\"name\":\"Pãozinho\",\"quantity\":0},{\"name\":\"Pastel Forno\",\"quantity\":0},{\"name\":\"Pastel Frito\",\"quantity\":0},{\"name\":\"Quibe\",\"quantity\":0},{\"name\":\"Risole\",\"quantity\":0},{\"name\":\"Saltenha\",\"quantity\":0},{\"name\":\"Tortalete\",\"quantity\":0},{\"name\":\"Torta Doce\",\"quantity\":0},{\"name\":\"Torta Salgada\",\"quantity\":0},{\"name\":\"Refris\",\"quantity\":0},{\"name\":\"Refri Coca\",\"quantity\":0},{\"name\":\"Água Mineral\",\"quantity\":0},{\"name\":\"Suco\",\"quantity\":0}]',
@@ -107,14 +107,7 @@ export default function ClientHistory() {
       paymentType: "DÍVIDA",
     };
 
-    console.log(paymentData);
     await api.post('orders', paymentData);
-
-    // await api.put(`clients/${clientId}`, {
-
-    //   name: "",
-    //   debt: (Number(cashValue.value) + Number(cardValue.value)),
-    // });
 
     setModalVisible(!isModalVisible);
     setUpdatePage(updatePage + 1);
@@ -205,9 +198,6 @@ export default function ClientHistory() {
 
   function paymentButtons(type) {
 
-    const parsedCash = parseFloat(String(cashValue.value).replace(',','.').replace(' ',''));
-    const parsedCard = parseFloat(String(cardValue.value).replace(',','.').replace(' ',''));
-
     const total = clientDebt;
 
     if(type == 'cash'){
@@ -272,6 +262,13 @@ export default function ClientHistory() {
         }
       }
     }
+  }
+
+  const [modalOrderVisible, setModalOrderVisible] = useState(false);
+
+  function toggleOrderModal(){
+
+    setModalOrderVisible(!modalOrderVisible);
   }
 
   // Load client orders from db
@@ -362,9 +359,33 @@ export default function ClientHistory() {
                     }).format(order.cashValue + order.cardValue)}
                   </Text>
 
-                  <TouchableOpacity style={[styles.clientButton, { backgroundColor: 'white'}]} onPress={() => {}}>
+                  <TouchableOpacity style={[styles.clientButton, { backgroundColor: 'white'}]} onPress={toggleOrderModal}>
                     <Feather name="chevron-down" size={26} color="#EB5757"/>
                   </TouchableOpacity>
+
+                  <Modal isVisible={modalOrderVisible}>
+                    <View style={styles.modal}>
+                      
+                      <Text style={styles.modalTitle}>{order.created_at}</Text>
+
+                      <Text style={styles.modalTitle}>{order.paymentType}</Text>
+
+                      <Text style={styles.modalTitle}>{order.paymentMode}</Text>
+
+                      <Text style={styles.modalTitle}>{order.cardValue}</Text>
+                      
+
+                      <View style={styles.modalButtons}>
+                        <TouchableOpacity style={styles.modalCancel} onPress={toggleOrderModal}>
+                          <Text style={styles.modalButtonsText}>Cancelar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.modalConfirm} onPress={() => {}}>
+                          <Text style={styles.modalButtonsText}>Confirmar</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </Modal>
                 </View>
               )}
             />
@@ -452,7 +473,7 @@ export default function ClientHistory() {
                 <Text style={styles.modalButtonsText}>Cancelar</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.modalConfirm} onPress={confirmPayment}>
+              <TouchableOpacity style={styles.modalConfirm} onPress={confirmPaymentAlert}>
                 <Text style={styles.modalButtonsText}>Confirmar</Text>
               </TouchableOpacity>
             </View>
