@@ -19,30 +19,21 @@ export default StyleSheet.create({
   selectContainer: {
 
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: '8%',
   },
 
   select: {
 
-    width: 300,
+    width: '85%',
+    marginRight: 5,
   },
 
   addClient: {
 
-    position: 'absolute',
-    right: 5,
-  },
-
-  selectClient:{
-
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
+    borderWidth: 1,
     borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
+    padding: 6,
   },
 
   totalOrderContainer: {
@@ -50,55 +41,43 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    position: 'relative',
-    bottom: 0,
-  },
-  
-  totalOrderText: {
-
     
-    fontSize: 20,
-    fontWeight: 'bold',
-  }, 
-  
-  totalOrderValue: {
-
-     
-    fontSize: 20,
-    fontWeight: 'bold',
-    borderWidth: 2,
+    marginTop: 4,
+    borderWidth: 1,
+    borderRadius: 4,
     borderColor: 'black', 
     padding: 4,
   },
+  
+  totalOrderText: {
+    
+    fontSize: 18,
+    fontWeight: 'bold',
+  }, 
 
-  totalContainer: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-
-    marginTop: 16,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#FFF',
-
-  },
- 
   containerConfirm: {
 
     flex: 1,
-    marginTop: 16,
+    marginTop: 8,
     backgroundColor: '#FFF',
     borderRadius: 8,
     padding: 12,
+
+    maxHeight: '90%',
+    borderColor: 'black',
+    borderWidth: 2
   },
 
   // Items 
   itemsContainer: {
 
-    marginTop: 16,
+    marginTop: 8,
     padding: 16,
-    height: 350,
+    height: '60%',
+
+    borderRadius: 4,
+    borderColor: 'black',
+    borderWidth: 2
   },
 
   itemsTags: {
@@ -106,38 +85,57 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+
+    borderRadius: 4,
+    borderColor: 'black',
+    padding: 4,
+    borderWidth: 1,
   },
 
   itemsList: {
 
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 12,
-    marginBottom: 12,
-    padding: 14,
+    marginTop: 6,
+    marginBottom: 6,
+    padding: 4,
+
+    borderRadius: 4,
+    backgroundColor: '#abb'
   },
 
+  itemsListName: {
 
+    minWidth: 120,
+  },
+ 
   // payment Container
   containerPayment: {
 
-    backgroundColor: '#fafaf9',
-    borderRadius: 8,
     padding: 8,
-    marginTop: 8,
+    
+    height: '30%',
+    marginVertical: '2%',
 
-    position:'absolute',
-    bottom: 10,
-    right: 10,
-    left:10
+    borderRadius: 8,
   },
-  
+
+  paymentTitle: {
+
+    fontWeight: 'bold',
+    fontSize: 18,
+    textAlign: 'center',
+   marginBottom: '1%'
+
+  },
+
   paymentCash:{ 
 
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    height: 80,
+    height: '40%',
+    marginBottom: '1%'
   },
 
   paymentCard:{ 
@@ -145,22 +143,22 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    height: 80,
-
+    height: '40%',
   },
 
   paymentTitleText: {
 
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    padding: 10,
+    padding: 8,
     textAlign: 'center',
+    
     minWidth: 100,
     maxWidth: 100,
     
     backgroundColor: '#eb5432',
     color: '#fff',
-    borderWidth: 1,
+    borderWidth: 0.6,
     borderColor: '#000',
     borderRadius: 4,
   },
@@ -172,7 +170,7 @@ export default StyleSheet.create({
 
   paymentInput:{ 
 
-    padding: 10,
+    padding: 8,
     marginHorizontal: 6,
     backgroundColor: 'white',
     textAlign: 'center',
@@ -187,9 +185,9 @@ export default StyleSheet.create({
   modal: {
 
     flex: 1,
-    maxHeight: 220,
+    maxHeight: '22%',
 
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: 'white',
     padding: 16,
   },
@@ -244,15 +242,16 @@ export default StyleSheet.create({
     fontWeight: 'bold',
   },
   // END Modal
+
    // Button styles
-   buttonContainer: {
+  buttonContainer: {
 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    padding: 12,
-    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: '8%'
   },
 
   eraseButton: {

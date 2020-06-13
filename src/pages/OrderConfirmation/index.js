@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Alert, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, SafeAreaView, View, Text, FlatList, Alert, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import api from '../../services/api';
 
@@ -9,18 +9,13 @@ import styles from './styles';
 
 import Modal from 'react-native-modal';
 
-import { ButtonGroup } from 'react-native-elements';
-
 export default function OrderConfirmation() {
 
-  // Select with clients available
-  
   const [selectValue, setSelectValue] = useState(0);
 
   const route = useRoute();
   const productParams = route.params.qtd;
   const totalParams = route.params.total;
-  const clientList = route.params.clients;
 
   const [order, setOrder] = useState([]);
   const [clients, setClients] = useState([]);
@@ -444,263 +439,268 @@ export default function OrderConfirmation() {
   }, [newClient]);
 
   return (
-
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={{ fontSize: 32 }}>
-          LOGO
-        </Text>
-        
-        <TouchableOpacity onPress={navigateBack}>
-          <Feather name="arrow-left" size={32} color="#EB5757"/>
-        </TouchableOpacity>
-      </View>
-      
-      <View style={styles.containerConfirm}>
-
-        <View style={styles.selectContainer}>
-
-          <View style={styles.select}>
-
-            <RNPickerSelect
-              style={{
-                ...pickerSelectStyles,
-                iconContainer: {
-                  top: 20,
-                  right: 10,
-                },
-                placeholder: {
-                  color: '#EB5757',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                },
-              }}
-              placeholder={{
-                label: 'Cliente',
-                value: '0',
-                color: 'red',}
-              }
-              useNativeAndroidPickerStyle={false}
-              onValueChange={(itemValue, itemIndex) => setSelectValue(itemValue)}
-              items={
-                
-                clients.map((client) => {
-                  return (
-                    
-                    {label: client.name, value:client.id, itemKey: client.id}
-                    ) 
-                  })
-                }
-                Icon={() => {
-                  return (
-                    <View
-                      style={{
-                        backgroundColor: 'transparent',
-                        borderTopWidth: 10,
-                        borderTopColor: '#EB5757',
-                        borderRightWidth: 10,
-                        borderRightColor: 'transparent',
-                        borderLeftWidth: 10,
-                        borderLeftColor: 'transparent',
-                        width: 0,
-                        height: 0,
-                      }}
-                    />
-                  );
-                }}
-            />
-
-          </View>
-
-            <TouchableOpacity style={styles.addClient} onPress={toggleModal}>
-              <Feather name="plus" size={32} color="#EB5757"/>
-            </TouchableOpacity>
-        </View>
-
-        <View style={styles.itemsContainer}>
-          <View style={styles.itemsTags}>
-            <Text>
-              Produto(s)
-            </Text>
-
-            <Text>
-              Quantidade
-            </Text>
-
-            <Text>
-              Valor
-            </Text>
-          </View>
-
-          <FlatList 
-            style={styles.productList}
-            data={order}
-            keyExtractor={order => String(order.id)}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item: order }) => (
-
-              <View style={styles.itemsList}>
-                <Text>
-                  {order.name}
-                </Text>
-                
-                <Text>
-                  {order.qtd}
-                </Text>
-                
-                <Text>
-                  {Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL', 
-                }).format(order.price*order.qtd)}
-                </Text>
-              </View>
-            )}>
-          </FlatList>
-
-          <View style={styles.totalOrderContainer}>
-
-            <Text style={styles.totalOrderText}>
-              Total da compra:
-            </Text>
-
-            <Text style={styles.totalOrderValue}>
-              {Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-              }).format(total)}
-            </Text>
-          </View>
-        </View>
-        
-        <Text>
-
-          {selectValue}
-        </Text>
-        {/* <ButtonGroup
-          buttons={buttons}
-          selectedButtonStyle={{ backgroundColor: '#98DA44' }}
-          selectedIndex={paymentIndex}
-          onPress={paymentButton}
-        /> */}
-
-
-
-        <View style={styles.containerPayment}>
-
-          <Text style={{ fontWeight: 'bold', fontSize: 22 ,textAlign: 'center' }}>
-            Pagamento
-          </Text>
-
-          <View style={styles.paymentCash}>
-
-            <TouchableOpacity onPress={() => paymentButtons('cash')}>
-              <Text style={styles.paymentTitleText}>
-                Dinheiro
-              </Text>
-            </TouchableOpacity>
-
-            <TextInput
-              id="cashInput"
-              style={styles.paymentInput}
-              keyboardType={'numeric'}
-
-              onTouchStart={() => setTotalCash({
-                value: '' , formatedValue: ''
-              })}
-
-              onEndEditing={handleInputCash}
-
-              onChangeText={text => setTotalCash({
-                value: text,
-                formatedValue: text,
-              })}
-              value={String(totalCash.formatedValue)}
-            />  
-
-            <TouchableOpacity 
-              onPress={() => setTotalCash({
-                value: 0, formatedValue: formatIntl(0)
-            })}>
-
-              <Feather style={styles.paymentErase} name="x-circle" size={25} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.paymentCard}>
-
-            <TouchableOpacity onPress={() => paymentButtons('card')}>
-              <Text style={styles.paymentTitleText}>
-                Cartão
-              </Text>
-            </TouchableOpacity>
-
-            <TextInput
-              style={styles.paymentInput}
-
-              onTouchStart={() => setTotalCard({
-                value: 0 , formatedValue: ''
-              })}
-
-              onEndEditing={handleInputCard}
-
-              onChangeText={text => setTotalCard({
-                value: text,
-                formatedValue: text,
-              })}
-              keyboardType={'numeric'}
-              value={String(totalCard.formatedValue)}
-            />
-
-            <TouchableOpacity 
-              onPress={() => setTotalCard({
-                value: 0, formatedValue: formatIntl(0)
-            })}>
-
-              <Feather style={styles.paymentErase} name="x-circle" size={25} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
     
-      <View style={styles.buttonContainer}>
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }}
+      behavior={Platform.select({
+        ios: 'padding',
+        android: 'height',
+    })}
+    >
 
-        <TouchableOpacity style={styles.eraseButton} onPress={navigateToHome}>
-          <Text style={styles.orderButtons}>
-            Cancelar
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={{ fontSize: 32 }}>
+            LOGO
           </Text>
-        </TouchableOpacity>
+          
+          <TouchableOpacity onPress={navigateBack}>
+            <Feather name="arrow-left" size={32} color="#EB5757"/>
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.containerConfirm}>
 
-        <TouchableOpacity style={styles.confirmButton} onPress={confirmOrderButton}>
-          <Text style={styles.orderButtons}>
-            Finalizar
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <View style={styles.selectContainer}>
 
-      <Modal isVisible={isModalVisible}>
-        <View style={styles.modal}>
+            <View style={styles.select}>
 
-          <Text style={styles.modalTitle}>Cadastro de Cliente</Text>
+              <RNPickerSelect
+                style={{
+                  ...pickerSelectStyles,
+                  iconContainer: {
+                    top: 20,
+                    right: 10,
+                  },
+                  placeholder: {
+                    color: '#EB5757',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                  },
+                }}
+                placeholder={{
+                  label: 'Cliente',
+                  value: '0',
+                  color: 'red',}
+                }
+                useNativeAndroidPickerStyle={false}
+                onValueChange={(itemValue, itemIndex) => setSelectValue(itemValue)}
+                items={
+                  
+                  clients.map((client) => {
+                    return (
+                      
+                      {label: client.name, value:client.id, itemKey: client.id}
+                      ) 
+                    })
+                  }
+                  Icon={() => {
+                    return (
+                      <View
+                        style={{
+                          backgroundColor: 'transparent',
+                          borderTopWidth: 10,
+                          borderTopColor: '#EB5757',
+                          borderRightWidth: 10,
+                          borderRightColor: 'transparent',
+                          borderLeftWidth: 10,
+                          borderLeftColor: 'transparent',
+                          width: 0,
+                          height: 0,
+                        }}
+                      />
+                    );
+                  }}
+              />
 
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Nome do Cliente"
-            onChangeText={text => onChangeClientName(text)}  
-          />
+            </View>
 
-          <View style={styles.modalButtons}>
-            <TouchableOpacity style={styles.modalCancel} onPress={toggleModal}>
-              <Text style={styles.modalButtonsText}>Cancelar</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.addClient} onPress={toggleModal}>
+                <Feather name="plus" size={28} color="#EB5757"/>
+              </TouchableOpacity>
+          </View>
 
-            <TouchableOpacity style={styles.modalConfirm} onPress={modalAddClient}>
-              <Text style={styles.modalButtonsText}>Confirmar</Text>
-            </TouchableOpacity>
+          <View style={styles.itemsContainer}>
+            <View style={styles.itemsTags}>
+              <Text style={{ minWidth: 110}}>
+                Produto(s)
+              </Text>
+
+              <Text>
+                Quant
+              </Text>
+
+              <Text>
+                Valor
+              </Text>
+            </View>
+
+            <FlatList 
+              style={styles.productList}
+              data={order}
+              keyExtractor={order => String(order.id)}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item: order }) => (
+
+                <View style={styles.itemsList}>
+                  <Text style={styles.itemsListName}>
+                    {order.name}
+                  </Text>
+                  
+                  <Text style={styles.itemsListQuant}>
+                    {order.qtd}
+                  </Text>
+                  
+                  <Text>
+                    {Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL', 
+                  }).format(order.price*order.qtd)}
+                  </Text>
+                </View>
+              )}>
+            </FlatList>
+
+            <View style={styles.totalOrderContainer}>
+
+              <Text style={styles.totalOrderText}>
+                Total da compra:
+              </Text>
+
+              <Text style={styles.totalOrderText}>
+                {Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL'
+                }).format(total)}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.containerPayment}>
+
+            <Text style={styles.paymentTitle}>
+              Pagamento
+            </Text>
+
+            <View style={styles.paymentCash}>
+
+              <TouchableOpacity onPress={() => paymentButtons('cash')}>
+                <Text style={styles.paymentTitleText}>
+                  Dinheiro
+                </Text>
+              </TouchableOpacity>
+
+              <TextInput
+                id="cashInput"
+                style={styles.paymentInput}
+                keyboardType={'numeric'}
+
+                onTouchStart={() => setTotalCash({
+                  value: '' , formatedValue: ''
+                })}
+
+                onEndEditing={handleInputCash}
+
+                onChangeText={text => setTotalCash({
+                  value: text,
+                  formatedValue: text,
+                })}
+                value={String(totalCash.formatedValue)}
+              />  
+
+              <TouchableOpacity 
+                onPress={() => setTotalCash({
+                  value: 0, formatedValue: formatIntl(0)
+              })}>
+
+                <Feather style={styles.paymentErase} name="x-circle" size={25} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.paymentCard}>
+
+              <TouchableOpacity onPress={() => paymentButtons('card')}>
+                <Text style={styles.paymentTitleText}>
+                  Cartão
+                </Text>
+              </TouchableOpacity>
+
+              <TextInput
+                style={styles.paymentInput}
+
+                onTouchStart={() => setTotalCard({
+                  value: 0 , formatedValue: ''
+                })}
+
+                onEndEditing={handleInputCard}
+
+                onChangeText={text => setTotalCard({
+                  value: text,
+                  formatedValue: text,
+                })}
+                keyboardType={'numeric'}
+                value={String(totalCard.formatedValue)}
+              />
+
+              <TouchableOpacity 
+                onPress={() => setTotalCard({
+                  value: 0, formatedValue: formatIntl(0)
+              })}>
+
+                <Feather style={styles.paymentErase} name="x-circle" size={25} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </Modal>
-    </View>
+      
+        <View style={styles.buttonContainer}>
+          
+            <TouchableOpacity style={[styles.confirmButton,
+            {
+              backgroundColor: '#aaafff' ,
+            }]} onPress={navigateBack}>
+              <Text style={styles.orderButtons}>
+                Voltar
+              </Text>
+            </TouchableOpacity>
+
+          <TouchableOpacity style={styles.eraseButton} onPress={navigateToHome}>
+            <Text style={styles.orderButtons}>
+              Cancelar
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.confirmButton} onPress={confirmOrderButton}>
+            <Text style={styles.orderButtons}>
+              Finalizar
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <Modal isVisible={isModalVisible}>
+          <View style={styles.modal}>
+
+            <Text style={styles.modalTitle}>Cadastro de Cliente</Text>
+
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Nome do Cliente"
+              onChangeText={text => onChangeClientName(text)}  
+            />
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalCancel} onPress={toggleModal}>
+                <Text style={styles.modalButtonsText}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.modalConfirm} onPress={modalAddClient}>
+                <Text style={styles.modalButtonsText}>Confirmar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -719,7 +719,7 @@ const pickerSelectStyles = StyleSheet.create({
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: '#EB5757',
     borderRadius: 8,
     color: 'red',
