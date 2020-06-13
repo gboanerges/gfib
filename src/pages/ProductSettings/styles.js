@@ -30,7 +30,7 @@ export default StyleSheet.create({
 
     backgroundColor: '#fafafa',
     borderRadius: 12,
-    height: 600,
+    height: '75%',
   },
 
   productTag: {
@@ -44,7 +44,7 @@ export default StyleSheet.create({
 
     flexDirection: "row",
     justifyContent: 'space-around',
-    padding: 12,
+    padding: 8,
     fontSize: 16,
     fontWeight: 'bold',
     minWidth: 150,
@@ -52,7 +52,7 @@ export default StyleSheet.create({
 
   productList: {
 
-    padding: 12,
+    padding: 8,
     
   },
 
@@ -62,8 +62,8 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    padding: 10,
-    marginBottom: 10,
+    padding: 8,
+    marginBottom: 8,
     borderRadius: 8,
     backgroundColor: '#ebaeaa',
   },
@@ -83,8 +83,6 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#626161',
-
-    
   },
 
   
@@ -110,10 +108,7 @@ export default StyleSheet.create({
     padding: 16,
     borderRadius: 8,
 
-    // position: 'absolute',
-    // bottom: 0,
-    // left: 20,
-    // right: 20,
+    height: '10%',
   },
 
   eraseButton: {
