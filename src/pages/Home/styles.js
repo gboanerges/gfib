@@ -9,18 +9,23 @@ export default StyleSheet.create({
     paddingTop: Constants.statusBarHeight + 20,
   },
   
-  logo: {
+  logoContainer: {
     
-    fontSize: 32,
-
+    height: '60%',
+    justifyContent: 'center',    
   },
 
-  buttonContainer: {
-    
-    marginTop: 360,
+  logo: {
+
+    fontSize: 32,
+    textAlign: 'center'
+  },
+
+  buttonsContainer: {
+
     backgroundColor: '#FFF',
     borderRadius: 8,
-    padding: 20,
+    padding: 16,
   },
 
   homeButtons: {
@@ -37,6 +42,6 @@ export default StyleSheet.create({
     
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 20,
   },
 });

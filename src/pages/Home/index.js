@@ -38,16 +38,19 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      {/* <Image source={logoImage} alt="GFIB"/> */}
-      <Text style={styles.logo}>
-        HOME PAGE
-      </Text>
+      
+      <View style={styles.logoContainer}>
 
-      <View style={styles.buttonContainer}>
+        <Text style={styles.logo}>
+          GFIB LOGO
+        </Text>
+      </View>
+
+      <View style={styles.buttonsContainer}>
 
         <TouchableOpacity style={[styles.homeButtons, { marginTop: 0}]} onPress={() => navigateTo('1')}>
           <Text style={styles.homeButtonsText}>
-            Iniciar nova venda
+            Iniciar Venda
           </Text>
         </TouchableOpacity>
 
