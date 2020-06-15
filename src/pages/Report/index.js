@@ -28,7 +28,7 @@ export default function Report() {
 
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
-    
+    setIsDateChanged(true);
     getReport(currentDate);
   };
 
@@ -42,7 +42,6 @@ export default function Report() {
 
     const compra = orders.filter(order => Moment(order.created_at, 'YYYY-MM-DD').format('YYYY-MM-DD') == Moment(data).format('YYYY-MM-DD'));
     
-    setOrdersByDay(compra);
     setTotalOrder(sumObject(compra, 'totalValue', ''));
     setTotalCash(sumObject(compra, 'cashValue', ''));
     setTotalCredit(sumObject(compra, 'cardValue', ''));
@@ -65,6 +64,9 @@ export default function Report() {
         }
       });
     }
+
+    setOrdersByDay(compra);
+
   }
 
   function sumObject (items, prop, type ){
@@ -142,6 +144,8 @@ export default function Report() {
   const [totalCredit, setTotalCredit] = useState(0);
   const [totalUnpaid, setTotalUnpaid] = useState(0);
 
+  const [isDateChanged, setIsDateChanged] = useState(false);
+
   async function loadData(){
 
     const response = await api.get('orders');
@@ -179,7 +183,7 @@ export default function Report() {
         <View style={styles.reportSearch}>
         
           <Text style={styles.reportDate}>
-            { ordersByDay.length > 0 ? Moment(date).format('DD/MM/YYYY') : "Escolha uma Data"} 
+            { isDateChanged ? Moment(date).format('DD/MM/YYYY') : "Escolha uma Data"} 
           </Text>
 
           <TouchableOpacity style={styles.reportCalendar} onPress={showMode}>
@@ -275,13 +279,13 @@ export default function Report() {
       <View style={styles.buttonContainer}>
 
         <TouchableOpacity style={styles.eraseButton} onPress={navigateToHome}>
-          <Text style={styles.buttonText}>
+          <Text style={styles.textButtons}>
             Voltar 
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.confirmButton} onPress={createXlsx}>
-          <Text style={styles.buttonText}>
+          <Text style={styles.textButtons}>
             Exportar
           </Text>
         </TouchableOpacity>

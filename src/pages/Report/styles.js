@@ -16,20 +16,23 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
 
+  reportContainer: {
+    
+    flex: 1,
+    backgroundColor: '#fafafa',
+    padding: 16,
+    borderRadius: 6,
+    marginTop: 12,
+
+    height: '85%',
+  },
+
   reportTitle: {
 
     textAlign:'center',
     fontSize: 20,
     fontWeight: 'bold',
     padding: 12,
-  },
-
-  reportContainer: {
-
-    backgroundColor: '#fafafa',
-    padding: 16,
-    borderRadius: 6,
-    marginTop: 12,
   },
 
   warningOrder: {
@@ -52,8 +55,8 @@ export default StyleSheet.create({
 
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#affafa',
+    borderWidth: 1.5,
+    borderColor: '#Eb0519',
     borderRadius: 6,
     padding: 6,
   },
@@ -61,7 +64,7 @@ export default StyleSheet.create({
   reportDate: {
 
     textAlign: 'center',
-    width: 280,
+    width: '100%',
     fontSize: 16,
     padding: 10,
   },
@@ -74,10 +77,11 @@ export default StyleSheet.create({
 
   reportSummary: {
 
+    flex: 1,
     backgroundColor: '#fee',
     marginTop: 16,
     padding: 16,
-    height: 500,
+    height: '100%',
   },
 
   reportTotal: {
@@ -95,20 +99,6 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'red',
-
-  },
-
-  order:{
-
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-
-    padding: 12,
-    marginBottom: 16,
-    borderRadius: 8,
-    backgroundColor: '#FFF',
   },
 
   // Button styles
@@ -120,6 +110,8 @@ export default StyleSheet.create({
 
     padding: 12,
     borderRadius: 8,
+
+    height: '8%',
   },
 
   eraseButton: {
@@ -136,10 +128,10 @@ export default StyleSheet.create({
     backgroundColor: '#00CF00',
   },
 
-  orderButtons: {
+  textButtons: {
 
     color: 'white',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 
