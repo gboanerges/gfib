@@ -37,7 +37,7 @@ export default StyleSheet.create({
 
   productList:{
 
-    marginTop: 32,
+    marginTop: 16,
     backgroundColor: '#C0BFBF',
     padding: 12,
     borderRadius: 6,
@@ -83,7 +83,7 @@ export default StyleSheet.create({
 
     borderColor: '#EF5757',
     borderWidth: 2,
-    borderRadius: 40,
+    borderRadius: 8,
   },
 
   buttonContainer: {

@@ -174,14 +174,17 @@ export default function ProductSettings() {
 
         <View style={styles.productTag}>
 
-          <Text style={styles.productTagText}> 
+          <Text style={[styles.productTagText, { minWidth: 90}]}> 
             Nome
           </Text>
 
-          <Text style={styles.productTagText}>
+          <Text style={[styles.productTagText]}>
             Preço             
           </Text>
 
+          <Text style={styles.productTagText}>
+            Editar          
+          </Text>
         </View>
         
         <FlatList 

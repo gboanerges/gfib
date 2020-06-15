@@ -28,26 +28,24 @@ export default StyleSheet.create({
   // Product Styles
   productContainer: {
 
+    flex: 1,
     backgroundColor: '#fafafa',
     borderRadius: 12,
-    height: '75%',
+    height: '78%',
   },
 
   productTag: {
 
     flexDirection: "row",
-    justifyContent: 'space-evenly',
-    padding: 12,
+    justifyContent: 'space-between',
+    padding: 8,
   },
 
   productTagText: {
 
-    flexDirection: "row",
-    justifyContent: 'space-around',
     padding: 8,
     fontSize: 16,
     fontWeight: 'bold',
-    minWidth: 150,
   },
 
   productList: {
@@ -108,7 +106,7 @@ export default StyleSheet.create({
     padding: 16,
     borderRadius: 8,
 
-    height: '10%',
+    height: '8%',
   },
 
   eraseButton: {
@@ -128,7 +126,7 @@ export default StyleSheet.create({
   buttonText: {
 
     color: 'white',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   // End Button Styles
