@@ -16,9 +16,23 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
 
+  containerConfirm: {
+
+    flex: 1,
+    marginTop: 8,
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+    padding: 8,
+
+    maxHeight: '90%',
+    borderColor: 'black',
+    borderWidth: 2
+  },
+
   selectContainer: {
 
     flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     height: '8%',
   },
@@ -26,14 +40,15 @@ export default StyleSheet.create({
   select: {
 
     width: '85%',
-    marginRight: 5,
+    marginRight: '1%',
   },
 
   addClient: {
 
     borderWidth: 1,
     borderRadius: 8,
-    padding: 6,
+    paddingHorizontal:6,
+    paddingVertical:6,
   },
 
   totalOrderContainer: {
@@ -54,19 +69,6 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   }, 
-
-  containerConfirm: {
-
-    flex: 1,
-    marginTop: 8,
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    padding: 12,
-
-    maxHeight: '90%',
-    borderColor: 'black',
-    borderWidth: 2
-  },
 
   // Items 
   itemsContainer: {
