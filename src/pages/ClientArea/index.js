@@ -160,7 +160,7 @@ export default function ClientArea() {
         </View>
 
         <FlatList 
-          style={[styles.clientList, { marginTop: 0 }]}
+          style={[{ marginTop: 0 }]}
           data={clients}
           keyExtractor={client => String(client.id)}
           showsVerticalScrollIndicator={false}

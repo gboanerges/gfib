@@ -5,8 +5,8 @@ export default StyleSheet.create({
   container:{
 
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: Constants.statusBarHeight + 20,
+    paddingHorizontal: 16,
+    paddingTop: Constants.statusBarHeight + 16,
   },
   
   header: {
@@ -18,7 +18,7 @@ export default StyleSheet.create({
 
   title: {
 
-    marginTop: 16,
+    marginTop: 8,
     padding: 12,
     fontSize: 18,
     fontWeight: 'bold',
@@ -27,23 +27,19 @@ export default StyleSheet.create({
   
   clientContainer: {
 
+    flex: 1,
     backgroundColor: '#fafafa',
     padding: 12,
-    marginTop: 16,
+    marginTop: 8,
     borderRadius: 8,
-    maxHeight: 500,
+    height: '78%',
   },
 
   clientTags: {
 
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 12,
-  },
-
-  clientList: {
-
-    
+    padding: 8,
   },
 
   client: {
@@ -87,7 +83,7 @@ export default StyleSheet.create({
   modal: {
 
     flex: 1,
-    maxHeight: 220,
+    maxHeight: 180,
 
     borderRadius: 12,
     backgroundColor: 'white',
@@ -152,25 +148,21 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    padding: 16,
+    padding: 8,
     borderRadius: 8,
-
-    position: 'absolute',
-    bottom: 0,
-    left: 20,
-    right: 20,
+    height: '8%',
   },
 
   eraseButton: {
 
-    padding: 10,
+    padding: 8,
     borderRadius: 6,
     backgroundColor: '#EB5757',
   },
   
   confirmButton: {
 
-    padding: 10,
+    padding: 8,
     borderRadius: 6,
     backgroundColor: '#00CF00',
   },
@@ -178,7 +170,7 @@ export default StyleSheet.create({
   buttonText: {
 
     color: 'white',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   // End Button Styles
