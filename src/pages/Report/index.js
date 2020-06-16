@@ -268,9 +268,14 @@ export default function Report() {
 
             </View>
 
+          : isDateChanged ? 
+            <Text style={styles.warningOrder}>
+              Não há compras neste dia!
+            </Text> 
+            
           : <Text style={styles.warningOrder}>
-            Não há compras neste dia!
-            </Text>}
+              Selecione uma Data!
+            </Text> }
 
           
         </View>
