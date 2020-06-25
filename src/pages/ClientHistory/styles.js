@@ -36,10 +36,10 @@ export default StyleSheet.create({
   },
   
   clientList: {
-
-    padding: 4,
+    borderWidth: 1,
     flex: 1,
-    
+    height: '50%',
+    padding: 4,
   },
 
   clientTags: {
@@ -128,7 +128,7 @@ export default StyleSheet.create({
   modal: {
 
     flex: 1,
-    maxHeight: 260,
+    maxHeight: '48%',
 
     borderRadius: 12,
     backgroundColor: 'white',
@@ -137,10 +137,11 @@ export default StyleSheet.create({
 
   modalTitle: {
     
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     
     textAlign: 'center',
+    marginBottom: 8,
   },
 
   modalButtons: {
@@ -246,11 +247,7 @@ export default StyleSheet.create({
 
     padding: 16,
     borderRadius: 8,
-
-    position: 'absolute',
-    bottom: 0,
-    left: 20,
-    right: 20,
+    height: '8%',
   },
 
   eraseButton: {

@@ -14,9 +14,18 @@ export default function ClientHistory() {
   const navigation = useNavigation();
 
   function navigateClientArea(){
-
-    navigation.navigate('ClientArea'); 
+    // Using push to force ClientArea to reload
+    navigation.push('ClientArea');
   } 
+
+  function navigateToOrder(order) {
+
+    navigation.navigate('ClientOrder', {
+
+      order,
+      name: clientName,
+    });
+  }
   
   // Modal usage
   const [isModalVisible, setModalVisible] = useState(false);
@@ -115,51 +124,21 @@ export default function ClientHistory() {
 
   const route = useRoute();
   const clientId = route.params.id;
-
-  async function loadData(){
-
+  
+  async function loadClientData(){
+    
     const clientResponse = await api.get(`clients/${clientId}`);
+    setClientName(clientResponse.data[0].name);
+    setClientDebt(clientResponse.data[0].debt);
+  }
+
+  async function loadOrdersData(){
 
     const orderResponse = await api.get(`orders/${clientId}`);
     
     setClientHistory(orderResponse.data);
-    setClientName(clientResponse.data[0].name);
-    setClientDebt(clientResponse.data[0].debt);
-    
-    orderResponse.data.forEach((order) => {
-      // Fix for warning json parse
-      if(order.products != null){
+  } 
 
-        const produtos = JSON.parse(order.products);
-                
-        const purchasedProducts = produtos.filter(prod => prod.quantity > 0);
-
-        let purchasesInline = '';
-
-        if(purchasedProducts.length > 0){
-
-          purchasedProducts.forEach(prod => {
-            
-            purchasesInline += prod.name + ':' + prod.quantity +',';
-          });
-
-          order['purchases'] = purchasesInline;
-
-        } else {
-          order['purchases'] = 'Pagamento de divída.';
-        }
-      }
-
-      const orderObj = {
-        [order.id]: { visible: false }
-      };
-
-      setOrderModal(prevState => {
-
-         return {...prevState, [order.id]: { visible: false }}
-      });
-    });
-  }  
   const [clientHistory, setClientHistory] = useState([]);
   // Dependency test for useEffect to load new product added
   const [updatePage, setUpdatePage] = useState(0);
@@ -307,7 +286,8 @@ export default function ClientHistory() {
   // Load client orders from db
   useEffect (() => {
 
-    loadData();
+    loadClientData();
+    loadOrdersData();
   }, [updatePage])
 
   return (
@@ -355,11 +335,11 @@ export default function ClientHistory() {
               </Text>
               
               <Text style={styles.unpaidTagsText}>
-                Valor Total
+                Total
               </Text>
 
               <Text style={styles.unpaidTagsText}>
-                Recebido
+                Tipo
               </Text>
 
               <Text></Text>
@@ -386,53 +366,13 @@ export default function ClientHistory() {
                   </Text>
 
                   <Text style={styles.orderValue}>
-                    {Intl.NumberFormat('pt-BR', { 
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(order.cashValue + order.cardValue)}
+                    {order.paymentType}
                   </Text>
 
-                  <TouchableOpacity style={[styles.clientButton, { backgroundColor: 'white'}]} onPress={()=> toggleVisibleOrder(order.id)}>
-                    <Feather name="chevron-down" size={26} color="#EB5757"/>
+                  <TouchableOpacity style={[styles.clientButton, { backgroundColor: 'white'}]} onPress={() => navigateToOrder(order)}>
+                    <Feather name="align-justify" size={26} color="#EB5757"/>
                   </TouchableOpacity>
 
-                  <Modal animationInTiming={800} animationOutTiming={800} isVisible={ orderModal[order.id] ? orderModal[order.id].visible : false}>
-                    <View style={styles.modal}>
-                      
-                      <Text style={styles.modalTitle}>Data: {order.created_at}</Text>
-
-                      <Text style={styles.modalText}>
-                        Tipo de pagamento: {order.paymentType}
-                      </Text>
-
-                      <Text style={styles.modalText}>
-                        Modo de pagamento: {order.paymentMode}
-                      </Text>
-
-                      <Text style={styles.modalText}>
-                        Valor Total: {formatIntl(order.totalValue)}
-                      </Text>
-
-                      <Text style={styles.modalText}>
-                        Valor Dinheiro: {formatIntl(order.cashValue)}
-                      </Text>
-
-                      <Text style={styles.modalText}>
-                        Valor Cartão: {formatIntl(order.cardValue)}
-                      </Text>
-                      
-                      <Text style={styles.modalText}>
-                        Produtos: {order.purchases}
-                      </Text>
-
-                      <View style={[styles.modalButtons, { justifyContent: 'flex-end'}]}>
-
-                        <TouchableOpacity style={styles.modalConfirm} onPress={() => toggleVisibleOrder(order.id)}>
-                          <Text style={styles.modalButtonsText}>Okay</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </Modal>
                 </View>
               )}
             />
@@ -440,8 +380,8 @@ export default function ClientHistory() {
 
           : <Text style={styles.warningOrder}>Não há histórico de compras</Text> }
 
-        <Modal animationInTiming={800} animationOutTiming={800}  isVisible={isModalVisible}>
-          <View style={styles.modal}>
+        <Modal animationInTiming={400} animationOutTiming={400}  isVisible={isModalVisible}>
+          <View style={[styles.modal, { maxHeight: '35%', }]}>
 
             <Text style={styles.modalTitle}>Pagamento</Text>
 
