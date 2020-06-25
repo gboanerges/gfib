@@ -53,7 +53,6 @@ export default StyleSheet.create({
 
   reportSearch: {
 
-    flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1.5,
     borderColor: '#Eb0519',
@@ -61,18 +60,35 @@ export default StyleSheet.create({
     padding: 6,
   },
 
-  reportDate: {
+  reportSearchDay: {
 
-    textAlign: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#Eb0519',
+    borderRadius: 6,
+    padding: 6,
+    marginBottom: 8,
     width: '100%',
+
+  },
+
+  reportDate: {
+    textAlign: 'center',
     fontSize: 16,
-    padding: 10,
+    padding: 8,
+    minWidth: '86%',
   },
 
   reportCalendar: {
 
-    position: 'absolute',
-    right: 5
+    
+  },
+
+  selectMonth: {
+
+    width: '100%',
   },
 
   reportSummary: {

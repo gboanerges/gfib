@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { Button, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
+import RNPickerSelect from 'react-native-picker-select';
 
 import Moment from 'moment';
 
@@ -28,8 +29,9 @@ export default function Report() {
 
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
-    setIsDateChanged(true);
+    setIsDateChanged(!isDateChanged);
     getReport(currentDate);
+    setSelectValueMonth(0);
   };
 
   const showMode = currentMode => {
@@ -38,18 +40,18 @@ export default function Report() {
     setMode(currentMode);
   };
 
-  function getReport(data){
+  function getReport(date){
 
-    const compra = orders.filter(order => Moment(order.created_at, 'YYYY-MM-DD').format('YYYY-MM-DD') == Moment(data).format('YYYY-MM-DD'));
+    const purchaseByDay = orders.filter(order => Moment(order.created_at, 'YYYY-MM-DD').format('YYYY-MM-DD') == Moment(date).format('YYYY-MM-DD'));
     
-    setTotalOrder(sumObject(compra, 'totalValue', ''));
-    setTotalCash(sumObject(compra, 'cashValue', ''));
-    setTotalCredit(sumObject(compra, 'cardValue', ''));
-    setTotalUnpaid(sumObject(compra, 'totalValue', 'FIADO'));
+    setTotalOrder(sumObject(purchaseByDay, 'totalValue', ''));
+    setTotalCash(sumObject(purchaseByDay, 'cashValue', ''));
+    setTotalCredit(sumObject(purchaseByDay, 'cardValue', ''));
+    setTotalUnpaid(sumObject(purchaseByDay, 'totalValue', 'FIADO'));
 
-    if(compra.length > 0){
+    if(purchaseByDay.length > 0){
     
-      compra.forEach((order) => {
+      purchaseByDay.forEach((order) => {
         // Fix for warning json parse
         if(order.products != null){
 
@@ -65,8 +67,48 @@ export default function Report() {
       });
     }
 
-    setOrdersByDay(compra);
+    setOrdersByDay(purchaseByDay);
 
+  }
+
+  function onChangeMonth(monthValue) {
+
+    setSelectValueMonth(monthValue);
+    setIsDateChanged(false);
+    getMonthReport(monthValue);
+  }
+
+  function getMonthReport(month){
+
+    if(month > 0){
+      
+      const purchaseByMonth = orders.filter(order => Moment(order.created_at, 'YYYY-MM-DD').format('MM') == Moment(month, 'MM').format('MM'));
+    
+      setTotalOrder(sumObject(purchaseByMonth, 'totalValue', ''));
+      setTotalCash(sumObject(purchaseByMonth, 'cashValue', ''));
+      setTotalCredit(sumObject(purchaseByMonth, 'cardValue', ''));
+      setTotalUnpaid(sumObject(purchaseByMonth, 'totalValue', 'FIADO'));
+
+      if(purchaseByMonth.length > 0){
+      
+        purchaseByMonth.forEach((order) => {
+          // Fix for warning json parse
+          if(order.products != null){
+
+          const produtos = JSON.parse(order.products);
+
+          produtos.forEach(prod =>{
+            
+            order[prod.name] = prod.quantity;
+          });
+
+          delete order.products;
+          }
+        });
+      }
+
+      setOrdersByDay(purchaseByMonth);
+    }
   }
 
   function sumObject (items, prop, type ){
@@ -74,7 +116,6 @@ export default function Report() {
     return items.reduce( function(a, b){
 
         if(type === ''){   
-
           return a + b[prop];
         }
         
@@ -146,6 +187,59 @@ export default function Report() {
 
   const [isDateChanged, setIsDateChanged] = useState(false);
 
+  const [selectValueMonth, setSelectValueMonth] = useState(0);
+  const [selectMonth, setSelectMonth] = useState([
+
+    {
+      name: 'Janeiro',
+      number: 1,
+    },
+    {
+      name: 'Fevereiro',
+      number: 2,
+    },
+    {
+      name: 'Março',
+      number: 3,
+    },
+    {
+      name: 'Abril',
+      number: 4,
+    },
+    {
+      name: 'Maio',
+      number: 5,
+    },
+    {
+      name: 'Junho',
+      number: 6,
+    },
+    {
+      name: 'Julho',
+      number: 7,
+    },
+    {
+      name: 'Agosto',
+      number: 8,
+    },
+    {
+      name: 'Setembro',
+      number: 9,
+    },
+    {
+      name: 'Outubro',
+      number: 10,
+    },
+    {
+      name: 'Novembro',
+      number: 11,
+    },
+    {
+      name: 'Dezembro',
+      number: 12,
+    },
+  ]);
+
   async function loadData(){
 
     const response = await api.get('orders');
@@ -181,15 +275,68 @@ export default function Report() {
       <View style={styles.reportContainer}>
 
         <View style={styles.reportSearch}>
-        
-          <Text style={styles.reportDate}>
-            { isDateChanged ? Moment(date).format('DD/MM/YYYY') : "Escolha uma Data"} 
-          </Text>
 
-          <TouchableOpacity style={styles.reportCalendar} onPress={showMode}>
-            <Feather name="calendar" size={50} color="#EB5757"/>
-          </TouchableOpacity>
+          <View style={styles.reportSearchDay}>
 
+            <Text style={styles.reportDate}>
+              { isDateChanged ? Moment(date).format('DD/MM/YYYY') : "Escolha uma Data"} 
+            </Text>
+
+            <TouchableOpacity style={styles.reportCalendar} onPress={showMode}>
+              <Feather name="calendar" size={36} color="#EB5757"/>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.selectMonth}>
+            <RNPickerSelect
+              style={{
+                ...pickerSelectStyles,
+                iconContainer: {
+                  top: 20,
+                  right: 10,
+                },
+                placeholder: {
+                  color: '#EB5757',
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                },
+              }}
+              placeholder={{
+                label: 'Selecione um mês',
+                value: '0',
+                color: 'red',}
+              }
+              useNativeAndroidPickerStyle={false}
+              onValueChange={(itemValue, itemIndex) => onChangeMonth(itemValue)
+              }
+              items={
+                
+                selectMonth.map((month) => {
+                  return (
+                    
+                    {label: month.name, value:month.number, itemKey: month.number}
+                    ) 
+                  })
+                }
+              Icon={() => {
+                return (
+                  <View
+                    style={{
+                      backgroundColor: 'transparent',
+                      borderTopWidth: 10,
+                      borderTopColor: '#EB5757',
+                      borderRightWidth: 10,
+                      borderRightColor: 'transparent',
+                      borderLeftWidth: 10,
+                      borderLeftColor: 'transparent',
+                      width: 0,
+                      height: 0,
+                    }}
+                  />
+                );
+              }}
+            />
+          </View>
         </View>
         
         <View style={styles.reportSummary}>
@@ -312,3 +459,27 @@ export default function Report() {
 
   );
 }
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: '#EB5757',
+    borderRadius: 8,
+    color: 'red',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+});

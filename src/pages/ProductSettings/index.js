@@ -239,7 +239,7 @@ export default function ProductSettings() {
         </TouchableOpacity>
       </View>
       
-      <Modal isVisible={isModalVisible}>
+      <Modal animationInTiming={800} animationOutTiming={800} isVisible={isModalVisible}>
         <View style={styles.modal}>
 
           <Text style={styles.modalTitle}>Cadastro de Produtos</Text>
