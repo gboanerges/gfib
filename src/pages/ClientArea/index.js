@@ -15,13 +15,12 @@ export default function ClientArea() {
 
   function navigateToHome(){
 
-    navigation.goBack(); 
-
+    navigation.navigate('Home'); 
   }
 
   function clientHistory(client) {
 
-    navigation.navigate('ClientHistory', {
+    navigation.push('ClientHistory', {
 
       name: client.name,
       debt: client.debt,
@@ -123,9 +122,9 @@ export default function ClientArea() {
 
   // Load clients from db
   useEffect (() => {
-
+    
     loadData();
-  }, [newClient])
+  }, [newClient]);
 
   return (
 
@@ -156,7 +155,13 @@ export default function ClientArea() {
             Débito
           </Text>
 
-          <Text></Text>
+          <Text>
+            Editar
+          </Text>
+          
+          <Text>
+            <Feather name="chevron-right" size={26} color="#000"/>
+          </Text>
         </View>
 
         <FlatList 
@@ -204,7 +209,7 @@ export default function ClientArea() {
         </TouchableOpacity>
       </View>
 
-      <Modal isVisible={isModalRegisterVisible}>
+      <Modal animationInTiming={800} animationOutTiming={800} isVisible={isModalRegisterVisible}>
         <View style={styles.modal}>
 
           <Text style={styles.modalTitle}>Cadastro de Cliente</Text>

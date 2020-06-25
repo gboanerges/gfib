@@ -7,11 +7,14 @@ const AppStack = createStackNavigator();
 
 import Home from './pages/Home';
 import Order from './pages/Order';
+import OrderConfirmation from './pages/OrderConfirmation';
+
 import ClientArea from './pages/ClientArea';
 import ClientHistory from './pages/ClientHistory';
+import ClientOrder from './pages/ClientOrder';
+
 import ProductSettings from './pages/ProductSettings';
 import Report from './pages/Report';
-import OrderConfirmation from './pages/OrderConfirmation';
 
 export default function Routes() {
 
@@ -25,6 +28,8 @@ export default function Routes() {
         <AppStack.Screen name="OrderConfirmation" component={OrderConfirmation}></AppStack.Screen>
         <AppStack.Screen name="ClientHistory" component={ClientHistory}></AppStack.Screen>
         <AppStack.Screen name="ClientArea" component={ClientArea}></AppStack.Screen>
+        <AppStack.Screen name="ClientOrder" component={ClientOrder}></AppStack.Screen>
+
         <AppStack.Screen name="ProductSettings" component={ProductSettings}></AppStack.Screen>
         <AppStack.Screen name="Report" component={Report}></AppStack.Screen>
         
