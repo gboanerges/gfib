@@ -28,10 +28,14 @@ export default function Report() {
     const currentDate = selectedDate || date;
 
     setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-    setIsDateChanged(!isDateChanged);
-    getReport(currentDate);
+
     setSelectValueMonth(0);
+    setIsMonthChanged(0);
+    setIsDateChanged(isDateChanged + 1);
+    
+    setDate(currentDate);
+
+    getReport(currentDate);
   };
 
   const showMode = currentMode => {
@@ -67,14 +71,15 @@ export default function Report() {
       });
     }
 
-    setOrdersByDay(purchaseByDay);
+    setReportOrders(purchaseByDay);
 
   }
 
   function onChangeMonth(monthValue) {
 
     setSelectValueMonth(monthValue);
-    setIsDateChanged(false);
+    setIsDateChanged(0);
+    setIsMonthChanged(isMonthChanged + 1);
     getMonthReport(monthValue);
   }
 
@@ -107,7 +112,7 @@ export default function Report() {
         });
       }
 
-      setOrdersByDay(purchaseByMonth);
+      setReportOrders(purchaseByMonth);
     }
   }
 
@@ -129,18 +134,17 @@ export default function Report() {
 
   async function createXlsx(){
 
-    if(ordersByDay.length > 0) {
+    if(reportOrders.length > 0) {
 
       const dataCompra = Moment(date).format('DDMMYYYY');
 
-      var ws = XLSX.utils.json_to_sheet(ordersByDay);
+      var ws = XLSX.utils.json_to_sheet(reportOrders);
 
       var wb = XLSX.utils.book_new();
       
       XLSX.utils.sheet_add_aoa(ws, [
         [" ", ' '],
         ["Valor Total", totalOrder],
-        ["Valor Recebido", totalReceived],
         ["Valor Dinheiro", totalCash],
         ["Valor Cartão", totalCredit],
         ["Valor Fiado", totalUnpaid],
@@ -175,9 +179,7 @@ export default function Report() {
   }
 
   const [orders, setOrders] = useState([]);
-  const [ordersByDay, setOrdersByDay] = useState([]);
-
-  const [productList, setProductList] = useState([]);
+  const [reportOrders, setReportOrders] = useState([]);
 
   const [totalOrder, setTotalOrder] = useState(0);
   const [totalReceived, setTotalReceived] = useState(0);
@@ -185,7 +187,8 @@ export default function Report() {
   const [totalCredit, setTotalCredit] = useState(0);
   const [totalUnpaid, setTotalUnpaid] = useState(0);
 
-  const [isDateChanged, setIsDateChanged] = useState(false);
+  const [isDateChanged, setIsDateChanged] = useState(0);
+  const [isMonthChanged, setIsMonthChanged] = useState(0);
 
   const [selectValueMonth, setSelectValueMonth] = useState(0);
   const [selectMonth, setSelectMonth] = useState([
@@ -279,7 +282,7 @@ export default function Report() {
           <View style={styles.reportSearchDay}>
 
             <Text style={styles.reportDate}>
-              { isDateChanged ? Moment(date).format('DD/MM/YYYY') : "Escolha uma Data"} 
+              { isDateChanged > 0 ? Moment(date).format('DD/MM/YYYY') : "Escolha uma Data"} 
             </Text>
 
             <TouchableOpacity style={styles.reportCalendar} onPress={showMode}>
@@ -307,6 +310,7 @@ export default function Report() {
                 color: 'red',}
               }
               useNativeAndroidPickerStyle={false}
+              value={selectValueMonth}
               onValueChange={(itemValue, itemIndex) => onChangeMonth(itemValue)
               }
               items={
@@ -341,7 +345,7 @@ export default function Report() {
         
         <View style={styles.reportSummary}>
           
-          { ordersByDay.length > 0 ? 
+          { reportOrders.length > 0 ? 
             <View>
               <Text style={styles.summaryTitle}>
                 Sumário
@@ -415,15 +419,14 @@ export default function Report() {
 
             </View>
 
-          : isDateChanged ? 
+          : isDateChanged > 0 || isMonthChanged > 0 ? 
             <Text style={styles.warningOrder}>
-              Não há compras neste dia!
+              Não há compras neste dia/mês!
             </Text> 
             
           : <Text style={styles.warningOrder}>
-              Selecione uma Data!
+              Selecione uma Data ou Mês!
             </Text> }
-
           
         </View>
       </View>
@@ -451,7 +454,7 @@ export default function Report() {
               mode={mode}
               is24Hour={true}
               display="default"
-              onChange={onChange}
+                            onChange={onChange}
             />
           )}
     </View>
