@@ -3,7 +3,10 @@ import { Button, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
+import Modal from 'react-native-modal';
+import {Calendar, LocaleConfig } from 'react-native-calendars';
+
 import RNPickerSelect from 'react-native-picker-select';
 
 import Moment from 'moment';
@@ -18,31 +21,75 @@ import styles from './styles';
 
 export default function Report() {
 
+  LocaleConfig.locales['br'] = {
+    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Septembro','Outubro','Novembro','Dezembro'],
+    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+    dayNamesShort: ['Dom.','Seg.','Ter.','Qua.','Qui.','Sex.','Sáb.'],
+    today: 'Hoje'
+  };
+  LocaleConfig.defaultLocale = 'br';
+
   const [date, setDate] = useState(new Date());
+  const [previousDate, setPreviousDate] = useState('');
 
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
+  // Modal Add new product
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
 
-  const onChange = (event, selectedDate) => {
+    setModalVisible(!isModalVisible);
+  };
 
-    const currentDate = selectedDate || date;
+  function changeData (dateString) {
 
-    setShow(Platform.OS === 'ios');
+    console.log('change data', dateString, 'prev', previousDate);
+    toggleModal();
 
     setSelectValueMonth(0);
     setIsMonthChanged(0);
+
     setIsDateChanged(isDateChanged + 1);
     
-    setDate(currentDate);
+    setDate(dateString);
+    getReport(dateString);
+ 
+    // Checks if the selected date exists in the object of marked dates
+    if (dateString != previousDate) {
+      
+      if(daysWithOrders[dateString]){
+        
+        const teste = daysWithOrders[dateString];
+        console.log('teste', teste);
+        teste.selectedColor = 'blue';
+        teste.selected = true;
+        console.log('teste 2', teste);
 
-    getReport(currentDate);
-  };
+        previousDate != '' ? daysWithOrders[previousDate].selected = false : null;
+      } 
+      
+      else {
 
-  const showMode = currentMode => {
+        setDaysWithOrders(prevState => {
 
-    setShow(true);
-    setMode(currentMode);
-  };
+        return { ...prevState, [dateString]: {selected: true, selectedColor: 'blue'},}
+        });
+
+        previousDate != '' ? daysWithOrders[previousDate].selected = false : null;
+      }
+      
+
+      // previousDate != '' ? setDaysWithOrders(prevState => {
+
+      //   return { ...prevState, [previousDate]: {selected: false, selectedColor: 'red'},}
+      // }) : null
+      
+    } else {
+      console.log('equal');
+      
+    } 
+
+    setPreviousDate(dateString);
+
+  }
 
   function getReport(date){
 
@@ -133,7 +180,8 @@ export default function Report() {
   };
 
   async function createXlsx(){
-
+    console.log(daysWithOrders);
+    return;
     if(reportOrders.length > 0) {
 
       const dataCompra = Moment(date).format('DDMMYYYY');
@@ -243,16 +291,30 @@ export default function Report() {
     },
   ]);
 
+  const [daysWithOrders, setDaysWithOrders] = useState(
+   {}
+  );
+
   async function loadData(){
 
     const response = await api.get('orders');
     setOrders(response.data);
-    //getReport(date);
+
+    // Setting days with orders to mark on the calendar    
+    const orderedDays = response.data.map((order) => Moment(order.created_at, 'YYYY-MM-DD').format('YYYY-MM-DD'));
+
+    orderedDays.forEach(day => {
+
+      setDaysWithOrders(prevState => {
+
+        return {...prevState, [day]: {marked: true, selectedColor: 'gray'} }
+      });
+    });
   }
 
   // Load orders from db
     useEffect (() => {
-
+      
       loadData();
 
    }, [])
@@ -263,7 +325,7 @@ export default function Report() {
 
       <View style={styles.header}>
         <Text style={{ fontSize: 32 }}>
-          LOGO
+          LOGO 
         </Text>
         
         <TouchableOpacity onPress={navigateToHome}>
@@ -285,7 +347,7 @@ export default function Report() {
               { isDateChanged > 0 ? Moment(date).format('DD/MM/YYYY') : "Escolha uma Data"} 
             </Text>
 
-            <TouchableOpacity style={styles.reportCalendar} onPress={showMode}>
+            <TouchableOpacity style={styles.reportCalendar} onPress={toggleModal}>
               <Feather name="calendar" size={36} color="#EB5757"/>
             </TouchableOpacity>
           </View>
@@ -446,20 +508,19 @@ export default function Report() {
         </TouchableOpacity>
       </View>
 
-      {show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              timeZoneOffsetInMinutes={0}
-              value={date}
-              mode={mode}
-              is24Hour={true}
-              display="default"
-                            onChange={onChange}
-            />
-          )}
+      <Modal animationInTiming={800} animationOutTiming={600} isVisible={isModalVisible}>
+                        
+        <View style={styles.modal}>
+        
+          <Calendar 
+            
+            markedDates={daysWithOrders}
+            onDayPress={(day) => changeData(day.dateString)}
+          />
+        </View>
+      </Modal>
+       
     </View>
-
-
   );
 }
 const pickerSelectStyles = StyleSheet.create({

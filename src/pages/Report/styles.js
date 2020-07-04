@@ -151,4 +151,24 @@ export default StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  // Modal 
+  modal: {
+
+    flex: 1,
+    maxHeight: '50%',
+
+    borderRadius: 12,
+    backgroundColor: 'white',
+    padding: 16,
+  },
+
+  modalTitle: {
+    
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+
+  // END Modal
 });
