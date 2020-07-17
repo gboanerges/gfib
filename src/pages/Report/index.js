@@ -41,7 +41,6 @@ export default function Report() {
 
   function changeData (dateString) {
 
-    console.log('change data', dateString, 'prev', previousDate);
     toggleModal();
 
     setSelectValueMonth(0);
@@ -53,15 +52,15 @@ export default function Report() {
     getReport(dateString);
  
     // Checks if the selected date exists in the object of marked dates
+    // to add the selected attribute or remove if already selected
     if (dateString != previousDate) {
       
       if(daysWithOrders[dateString]){
         
         const teste = daysWithOrders[dateString];
-        console.log('teste', teste);
+
         teste.selectedColor = 'blue';
         teste.selected = true;
-        console.log('teste 2', teste);
 
         previousDate != '' ? daysWithOrders[previousDate].selected = false : null;
       } 
@@ -75,18 +74,8 @@ export default function Report() {
 
         previousDate != '' ? daysWithOrders[previousDate].selected = false : null;
       }
-      
-
-      // previousDate != '' ? setDaysWithOrders(prevState => {
-
-      //   return { ...prevState, [previousDate]: {selected: false, selectedColor: 'red'},}
-      // }) : null
-      
-    } else {
-      console.log('equal');
-      
     } 
-
+    
     setPreviousDate(dateString);
 
   }
@@ -180,8 +169,7 @@ export default function Report() {
   };
 
   async function createXlsx(){
-    console.log(daysWithOrders);
-    return;
+    
     if(reportOrders.length > 0) {
 
       const dataCompra = Moment(date).format('DDMMYYYY');
