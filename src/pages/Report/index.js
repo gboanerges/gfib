@@ -3,7 +3,6 @@ import { Button, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 
-// import DateTimePicker from '@react-native-community/datetimepicker';
 import Modal from 'react-native-modal';
 import {Calendar, LocaleConfig } from 'react-native-calendars';
 
@@ -22,7 +21,7 @@ import styles from './styles';
 export default function Report() {
 
   LocaleConfig.locales['br'] = {
-    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Septembro','Outubro','Novembro','Dezembro'],
+    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
     dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
     dayNamesShort: ['Dom.','Seg.','Ter.','Qua.','Qui.','Sex.','Sáb.'],
     today: 'Hoje'
@@ -56,23 +55,23 @@ export default function Report() {
     if (dateString != previousDate) {
       
       if(daysWithOrders[dateString]){
-        
-        const teste = daysWithOrders[dateString];
-
-        teste.selectedColor = 'blue';
-        teste.selected = true;
 
         previousDate != '' ? daysWithOrders[previousDate].selected = false : null;
+        
+        const selectedDay = daysWithOrders[dateString];
+
+        selectedDay.selectedColor = 'blue';
+        selectedDay.selected = true;
       } 
       
       else {
 
+        previousDate != '' ? daysWithOrders[previousDate].selected = false : null;
+
         setDaysWithOrders(prevState => {
 
-        return { ...prevState, [dateString]: {selected: true, selectedColor: 'blue'},}
+          return { ...prevState, [dateString]: {selected: true, selectedColor: 'blue'},}
         });
-
-        previousDate != '' ? daysWithOrders[previousDate].selected = false : null;
       }
     } 
     
@@ -287,7 +286,7 @@ export default function Report() {
 
     const response = await api.get('orders');
     setOrders(response.data);
-
+    
     // Setting days with orders to mark on the calendar    
     const orderedDays = response.data.map((order) => Moment(order.created_at, 'YYYY-MM-DD').format('YYYY-MM-DD'));
 
