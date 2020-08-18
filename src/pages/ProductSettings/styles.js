@@ -8,22 +8,6 @@ export default StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: Constants.statusBarHeight + 20,
   },
-  
-  header: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  title: {
-
-    marginTop: 16,
-    padding: 12,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
 
   // Product Styles
   productContainer: {
@@ -32,6 +16,7 @@ export default StyleSheet.create({
     backgroundColor: '#fafafa',
     borderRadius: 12,
     height: '78%',
+    marginTop: 8,
   },
 
   productTag: {

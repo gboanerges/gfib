@@ -8,6 +8,7 @@ import Moment from 'moment';
 import api from '../../services/api';
 
 import styles from './styles';
+import PageHeader from '../../components/PageHeader';
 
 export default function ClientHistory() {
 
@@ -33,12 +34,12 @@ export default function ClientHistory() {
 
     setCashValue({ 
 
-      value: 0, formatedValue: 'R$0,00',
+      value: 0, formattedValue: 'R$0,00',
     });
 
     setCardValue({ 
 
-      value: 0, formatedValue: 'R$0,00',
+      value: 0, formattedValue: 'R$0,00',
     });
 
     setModalVisible(!isModalVisible);
@@ -148,21 +149,21 @@ export default function ClientHistory() {
 
   const [cardValue, setCardValue] = useState({
 
-    value: 0, formatedValue: 'R$0,00',
+    value: 0, formattedValue: 'R$0,00',
   });
   const [cashValue, setCashValue] = useState({
 
-    value: 0, formatedValue: 'R$0,00',
+    value: 0, formattedValue: 'R$0,00',
   });
 
   function formatIntl(value){
 
-    const formatedValue = Intl.NumberFormat('pt-BR', {
+    const formattedValue = Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
     }).format(value);
 
-    return formatedValue;
+    return formattedValue;
   }
 
   function handleInputCard(event) {
@@ -175,13 +176,13 @@ export default function ClientHistory() {
       setCardValue({
         
         value: parsedCard,
-        formatedValue: formatIntl(parsedCard),
+        formattedValue: formatIntl(parsedCard),
       })
     }else {
       setCardValue({
         
         value: 0,
-        formatedValue: formatIntl(0),
+        formattedValue: formatIntl(0),
       })
     }
   }
@@ -195,13 +196,13 @@ export default function ClientHistory() {
       setCashValue({
         
         value: parsedCash,
-        formatedValue: formatIntl(parsedCash),
+        formattedValue: formatIntl(parsedCash),
       });
     } else {
       setCashValue({
         
         value: 0,
-        formatedValue: formatIntl(0),
+        formattedValue: formatIntl(0),
       });
     }
   }
@@ -217,7 +218,7 @@ export default function ClientHistory() {
         setCashValue({
           
           value: total,
-          formatedValue: Intl.NumberFormat('pt-BR', {
+          formattedValue: Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(total),
@@ -231,7 +232,7 @@ export default function ClientHistory() {
         setCashValue({
         
           value: amountLeft,
-          formatedValue: Intl.NumberFormat('pt-BR', {
+          formattedValue: Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(amountLeft),
@@ -247,7 +248,7 @@ export default function ClientHistory() {
         setCardValue({
           
           value: total,
-          formatedValue: Intl.NumberFormat('pt-BR', {
+          formattedValue: Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(total),
@@ -263,7 +264,7 @@ export default function ClientHistory() {
           setCardValue({
           
             value: amountLeft,
-            formatedValue: Intl.NumberFormat('pt-BR', {
+            formattedValue: Intl.NumberFormat('pt-BR', {
               style: 'currency',
               currency: 'BRL',
             }).format(amountLeft),
@@ -294,19 +295,9 @@ export default function ClientHistory() {
 
     <View style={styles.container}>
 
-      <View style={styles.header}>
-        <Text style={{ fontSize: 32 }}>
-          LOGO
-        </Text>
-        
-        <TouchableOpacity onPress={navigateClientArea}>
-          <Feather name="arrow-left" size={32} color="#EB5757"/>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.title}>
+      <PageHeader>
         Histórico  
-      </Text>
+      </PageHeader>
 
       <View style={styles.clientContainer}>
 
@@ -355,7 +346,7 @@ export default function ClientHistory() {
                 <View key={order.id} style={styles.order}>
 
                   <Text style={styles.orderDate}>
-                    {Moment(order.created_at, 'YYYY-MM-DD').format('DD/MM/YY')}
+                    {Moment(order.created_at, 'MM-DD-YYYY').format('DD/MM/YY')}
 
                   </Text>
                   <Text style={styles.orderValue}>
@@ -401,20 +392,20 @@ export default function ClientHistory() {
                   keyboardType={'numeric'}
 
                   onTouchStart={() => setCashValue({
-                    value: '' , formatedValue: ''
+                    value: '' , formattedValue: ''
                   })}
     
                   onEndEditing={handleInputCash}
     
                   onChangeText={text => setCashValue({
                     value: text,
-                    formatedValue: text,
+                    formattedValue: text,
                   })}
-                  value={String(cashValue.formatedValue)}
+                  value={String(cashValue.formattedValue)}
                 />  
 
                 <TouchableOpacity onPress={() => setCashValue({
-                  value: 0, formatedValue: formatIntl(0)
+                  value: 0, formattedValue: formatIntl(0)
                 })}>
 
                   <Feather style={styles.paymentErase} name="x-circle" size={25} />
@@ -434,20 +425,20 @@ export default function ClientHistory() {
                   keyboardType={'numeric'}
 
                   onTouchStart={() => setCardValue({
-                    value: '' , formatedValue: ''
+                    value: '' , formattedValue: ''
                   })}
     
                   onEndEditing={handleInputCard}
     
                   onChangeText={text => setCardValue({
                     value: text,
-                    formatedValue: text,
+                    formattedValue: text,
                   })}
-                  value={String(cardValue.formatedValue)}
+                  value={String(cardValue.formattedValue)}
                 />
 
                 <TouchableOpacity onPress={() => setCardValue({
-                  value: 0, formatedValue: formatIntl(0)
+                  value: 0, formattedValue: formatIntl(0)
                 })}>
 
                   <Feather style={styles.paymentErase} name="x-circle" size={25} />

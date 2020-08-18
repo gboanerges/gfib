@@ -5,26 +5,10 @@ export default StyleSheet.create({
   container:{
 
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: Constants.statusBarHeight + 16,
-  },
-  
-  header: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: Constants.statusBarHeight + 20,
   },
 
-  title: {
-
-    marginTop: 8,
-    padding: 12,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  
   clientContainer: {
 
     flex: 1,

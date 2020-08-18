@@ -9,13 +9,6 @@ export default StyleSheet.create({
     paddingTop: Constants.statusBarHeight + 20,
   },
   
-  header: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
   containerConfirm: {
 
     flex: 1,

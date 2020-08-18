@@ -9,20 +9,13 @@ export default StyleSheet.create({
     paddingTop: Constants.statusBarHeight + 20,
   },
   
-  header: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
   totalContainer: {
 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    marginTop: 16,
+    marginTop: 8,
     padding: 12,
     borderRadius: 8,
     backgroundColor: '#FFF',

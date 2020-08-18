@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute} from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 
@@ -7,6 +7,7 @@ import styles from './styles';
 import Moment from 'moment';
 
 import api from '../../services/api';
+import PageHeader from '../../components/PageHeader';
 
 export default function ProductSettings() {
 
@@ -20,12 +21,12 @@ export default function ProductSettings() {
   
   function formatIntl(value){
 
-    const formatedValue = Intl.NumberFormat('pt-BR', {
+    const formattedValue = Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
     }).format(value);
 
-    return formatedValue;
+    return formattedValue;
   }
 
   const route = useRoute();
@@ -51,23 +52,14 @@ export default function ProductSettings() {
   return (
 
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={{ fontSize: 32 }}>
-          LOGO
-        </Text>
-        
-        <TouchableOpacity onPress={navigateToHome}>
-          <Feather name="arrow-left" size={32} color="#EB5757"/>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.title}>
+      
+      <PageHeader>
         Cliente: {clientName}
-      </Text>
+      </PageHeader>
 
       <View style={styles.clientOrderContainer}>
                       
-          <Text style={styles.clientOrderData}>Data: {Moment(order.created_at, 'YYYY-MM-DD').format('DD/MM/YY')}</Text>
+          <Text style={styles.clientOrderData}>Data: {Moment(order.created_at, 'MM/DD/YYYY').format('DD/MM/YY')}</Text>
         
           <View style={styles.orderInfoContainer}>
 

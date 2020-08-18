@@ -8,13 +8,6 @@ export default StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: Constants.statusBarHeight + 20,
   },
-  
-  header: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
 
   reportContainer: {
     
@@ -22,17 +15,8 @@ export default StyleSheet.create({
     backgroundColor: '#fafafa',
     padding: 16,
     borderRadius: 6,
-    marginTop: 12,
-
-    height: '85%',
-  },
-
-  reportTitle: {
-
-    textAlign:'center',
-    fontSize: 20,
-    fontWeight: 'bold',
-    padding: 12,
+    marginTop: 8,
+    height: '78%',
   },
 
   warningOrder: {

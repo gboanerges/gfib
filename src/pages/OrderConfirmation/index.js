@@ -8,6 +8,7 @@ import { Feather } from '@expo/vector-icons';
 import styles from './styles';
 
 import Modal from 'react-native-modal';
+import PageHeader from '../../components/PageHeader';
 
 export default function OrderConfirmation() {
 
@@ -449,15 +450,8 @@ export default function OrderConfirmation() {
     >
 
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={{ fontSize: 32 }}>
-            LOGO
-          </Text>
-          
-          <TouchableOpacity onPress={navigateBack}>
-            <Feather name="arrow-left" size={32} color="#EB5757"/>
-          </TouchableOpacity>
-        </View>
+        
+        <PageHeader />
         
         <View style={styles.containerConfirm}>
 

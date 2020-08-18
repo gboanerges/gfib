@@ -8,6 +8,7 @@ import Modal from 'react-native-modal';
 import api from '../../services/api';
 
 import styles from './styles';
+import PageHeader from '../../components/PageHeader';
 
 export default function ProductSettings() {
 
@@ -156,19 +157,10 @@ export default function ProductSettings() {
   return (
 
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={{ fontSize: 32 }}>
-          LOGO
-        </Text>
-        
-        <TouchableOpacity onPress={navigateToHome}>
-          <Feather name="arrow-left" size={32} color="#EB5757"/>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.title}>
-        Configurações de produtos
-      </Text>
+      
+      <PageHeader>
+        Configurações de Produtos
+      </PageHeader>
 
       <View style={styles.productContainer}>
 

@@ -9,30 +9,13 @@ export default StyleSheet.create({
     paddingTop: Constants.statusBarHeight + 20,
   },
   
-  header: {
-
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  title: {
-
-    marginTop: 16,
-    padding: 12,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  
   clientContainer: {
 
     backgroundColor: '#fafafa',
     padding: 12,
-    marginTop: 16,
+    marginTop: 8,
     borderRadius: 8,
-    minHeight: 590,
-    maxHeight: 590,
+    height: '78%',
   },
   
   clientList: {

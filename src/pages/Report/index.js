@@ -15,6 +15,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 import api from '../../services/api';
+import PageHeader from '../../components/PageHeader';
 
 import styles from './styles';
 
@@ -30,7 +31,7 @@ export default function Report() {
 
   const [date, setDate] = useState(new Date());
   const [previousDate, setPreviousDate] = useState('');
-
+  const [currentYear, setCurrentYear] = useState(0);
   // Modal Add new product
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
@@ -112,9 +113,14 @@ export default function Report() {
 
   function onChangeMonth(monthValue) {
 
+    const year = new Date().getFullYear()
     setSelectValueMonth(monthValue);
     setIsDateChanged(0);
     setIsMonthChanged(isMonthChanged + 1);
+    if(monthValue != 0){
+
+      console.log(monthValue +'/'+ year);
+    }
     getMonthReport(monthValue);
   }
 
@@ -230,51 +236,51 @@ export default function Report() {
 
     {
       name: 'Janeiro',
-      number: 1,
+      number: '01',
     },
     {
       name: 'Fevereiro',
-      number: 2,
+      number: '02',
     },
     {
       name: 'Março',
-      number: 3,
+      number: '03',
     },
     {
       name: 'Abril',
-      number: 4,
+      number: '04',
     },
     {
       name: 'Maio',
-      number: 5,
+      number: '05',
     },
     {
       name: 'Junho',
-      number: 6,
+      number: '06',
     },
     {
       name: 'Julho',
-      number: 7,
+      number: '07',
     },
     {
       name: 'Agosto',
-      number: 8,
+      number: '08',
     },
     {
       name: 'Setembro',
-      number: 9,
+      number: '09',
     },
     {
       name: 'Outubro',
-      number: 10,
+      number: '10',
     },
     {
       name: 'Novembro',
-      number: 11,
+      number: '11',
     },
     {
       name: 'Dezembro',
-      number: 12,
+      number: '12',
     },
   ]);
 
@@ -302,7 +308,7 @@ export default function Report() {
   // Load orders from db
     useEffect (() => {
       
-      loadData();
+      //loadData();
 
    }, [])
 
@@ -310,19 +316,9 @@ export default function Report() {
 
     <View style={styles.container}>
 
-      <View style={styles.header}>
-        <Text style={{ fontSize: 32 }}>
-          LOGO 
-        </Text>
-        
-        <TouchableOpacity onPress={navigateToHome}>
-          <Feather name="arrow-left" size={32} color="#EB5757"/>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.reportTitle}>
-        Relatórios
-      </Text>
+      <PageHeader>
+          Relatórios
+      </PageHeader>
 
       <View style={styles.reportContainer}>
 
@@ -365,12 +361,12 @@ export default function Report() {
               items={
                 
                 selectMonth.map((month) => {
+
                   return (
-                    
                     {label: month.name, value:month.number, itemKey: month.number}
                     ) 
                   })
-                }
+              }
               Icon={() => {
                 return (
                   <View
