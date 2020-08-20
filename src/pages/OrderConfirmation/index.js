@@ -25,13 +25,13 @@ export default function OrderConfirmation() {
   const [totalCash, setTotalCash] = useState({
 
     value: 0,
-    formatedValue: 'R$0,00'
+    formattedValue: 'R$0,00'
   });
 
   const [totalCard, setTotalCard] = useState({
 
     value: 0,
-    formatedValue: 'R$0,00'
+    formattedValue: 'R$0,00'
   });
 
   function loadData(){
@@ -39,22 +39,12 @@ export default function OrderConfirmation() {
     let prod = productParams.filter(produto => produto.qtd > 0);
     setOrder(prod);
     setTotal(String(totalParams));
-    //setClients(clientList);
   }
 
   useEffect (() => {
 
     loadData();
   }, [])
-
-  const buttons = ['R$', 'CC', 'FIADO' ];
-
-  const [paymentIndex, setPaymentIndex] = useState(0);
-
-  function paymentButton(index){
-
-    setPaymentIndex(index);
-  }
 
   function paymentButtons(type) {
 
@@ -67,7 +57,7 @@ export default function OrderConfirmation() {
         setTotalCash({
           
           value: total,
-          formatedValue: Intl.NumberFormat('pt-BR', {
+          formattedValue: Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(total),
@@ -82,7 +72,7 @@ export default function OrderConfirmation() {
         setTotalCash({
         
           value: amountLeft,
-          formatedValue: Intl.NumberFormat('pt-BR', {
+          formattedValue: Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(amountLeft),
@@ -98,7 +88,7 @@ export default function OrderConfirmation() {
         setTotalCard({
           
           value: total,
-          formatedValue: Intl.NumberFormat('pt-BR', {
+          formattedValue: Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(total),
@@ -114,7 +104,7 @@ export default function OrderConfirmation() {
           setTotalCard({
           
             value: amountLeft,
-            formatedValue: Intl.NumberFormat('pt-BR', {
+            formattedValue: Intl.NumberFormat('pt-BR', {
               style: 'currency',
               currency: 'BRL',
             }).format(amountLeft),
@@ -127,12 +117,12 @@ export default function OrderConfirmation() {
 
   function formatIntl(value){
 
-    const formatedValue = Intl.NumberFormat('pt-BR', {
+    const formattedValue = Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
     }).format(value);
 
-    return formatedValue;
+    return formattedValue;
   }
 
   function handleInputCard(event) {
@@ -145,13 +135,13 @@ export default function OrderConfirmation() {
       setTotalCard({
         
         value: parsedCard,
-        formatedValue: formatIntl(parsedCard),
+        formattedValue: formatIntl(parsedCard),
       })
     }else {
       setTotalCard({
         
         value: 0,
-        formatedValue: formatIntl(0),
+        formattedValue: formatIntl(0),
       })
     }
   }
@@ -165,13 +155,13 @@ export default function OrderConfirmation() {
       setTotalCash({
         
         value: parsedCash,
-        formatedValue: formatIntl(parsedCash),
+        formattedValue: formatIntl(parsedCash),
       })
     } else {
       setTotalCash({
         
         value: 0,
-        formatedValue: formatIntl(0),
+        formattedValue: formatIntl(0),
       })
     }
   }
@@ -590,21 +580,21 @@ export default function OrderConfirmation() {
                 keyboardType={'numeric'}
 
                 onTouchStart={() => setTotalCash({
-                  value: '' , formatedValue: ''
+                  value: '' , formattedValue: ''
                 })}
 
                 onEndEditing={handleInputCash}
 
                 onChangeText={text => setTotalCash({
                   value: text,
-                  formatedValue: text,
+                  formattedValue: text,
                 })}
-                value={String(totalCash.formatedValue)}
+                value={String(totalCash.formattedValue)}
               />  
 
               <TouchableOpacity 
                 onPress={() => setTotalCash({
-                  value: 0, formatedValue: formatIntl(0)
+                  value: 0, formattedValue: formatIntl(0)
               })}>
 
                 <Feather style={styles.paymentErase} name="x-circle" size={25} />
@@ -623,22 +613,22 @@ export default function OrderConfirmation() {
                 style={styles.paymentInput}
 
                 onTouchStart={() => setTotalCard({
-                  value: 0 , formatedValue: ''
+                  value: 0 , formattedValue: ''
                 })}
 
                 onEndEditing={handleInputCard}
 
                 onChangeText={text => setTotalCard({
                   value: text,
-                  formatedValue: text,
+                  formattedValue: text,
                 })}
                 keyboardType={'numeric'}
-                value={String(totalCard.formatedValue)}
+                value={String(totalCard.formattedValue)}
               />
 
               <TouchableOpacity 
                 onPress={() => setTotalCard({
-                  value: 0, formatedValue: formatIntl(0)
+                  value: 0, formattedValue: formatIntl(0)
               })}>
 
                 <Feather style={styles.paymentErase} name="x-circle" size={25} />
