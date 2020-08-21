@@ -80,17 +80,32 @@ export default function Report() {
 
   }
 
-  function getReport(date){
+  async function getReport(date){
 
-    const purchaseByDay = orders.filter(order => Moment(order.created_at, 'YYYY-MM-DD').format('YYYY-MM-DD') == Moment(date).format('YYYY-MM-DD'));
-    
-    setTotalOrder(sumObject(purchaseByDay, 'totalValue', ''));
-    setTotalCash(sumObject(purchaseByDay, 'cashValue', ''));
-    setTotalCredit(sumObject(purchaseByDay, 'cardValue', ''));
-    setTotalUnpaid(sumObject(purchaseByDay, 'totalValue', 'FIADO'));
+    const getReportDate = Moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY');
 
-    if(purchaseByDay.length > 0){
+    const response = await api.get('orders', {
+
+      params: {
+        date: getReportDate,
+        month: '',
+      }
+    });
+    const purchaseByDay = response.data;
     
+    // Date doesn't have orders return error msg 
+    if(purchaseByDay.error){
+    
+      setReportOrders([]);
+    } 
+    // If error msg is undefined, orders are returned of the given day
+    else {
+
+      setTotalOrder(sumObject(purchaseByDay, 'totalValue', ''));
+      setTotalCash(sumObject(purchaseByDay, 'cashValue', ''));
+      setTotalCredit(sumObject(purchaseByDay, 'cardValue', ''));
+      setTotalUnpaid(sumObject(purchaseByDay, 'totalValue', 'FIADO'));
+
       purchaseByDay.forEach((order) => {
         // Fix for warning json parse
         if(order.products != null){
@@ -105,10 +120,9 @@ export default function Report() {
         delete order.products;
         }
       });
+      
+      setReportOrders(purchaseByDay);
     }
-
-    setReportOrders(purchaseByDay);
-
   }
 
   function onChangeMonth(monthValue) {
@@ -119,17 +133,29 @@ export default function Report() {
     setIsMonthChanged(isMonthChanged + 1);
     if(monthValue != 0){
 
-      console.log(monthValue +'/'+ year);
+      getMonthReport(monthValue +'/'+ year);
     }
-    getMonthReport(monthValue);
   }
 
-  function getMonthReport(month){
+  async function getMonthReport(month){
 
-    if(month > 0){
-      
-      const purchaseByMonth = orders.filter(order => Moment(order.created_at, 'YYYY-MM-DD').format('MM') == Moment(month, 'MM').format('MM'));
+    const response = await api.get('orders', {
+
+      params: {
+        date: '',
+        month: month,
+      }
+    });
     
+    const purchaseByMonth = response.data;
+    // Month doesn't have orders return error msg 
+    if(purchaseByMonth.error){
+    
+      setReportOrders([]);
+    } 
+    // If error msg is undefined, orders are returned of the given month
+    else {
+
       setTotalOrder(sumObject(purchaseByMonth, 'totalValue', ''));
       setTotalCash(sumObject(purchaseByMonth, 'cashValue', ''));
       setTotalCredit(sumObject(purchaseByMonth, 'cardValue', ''));
@@ -152,7 +178,6 @@ export default function Report() {
           }
         });
       }
-
       setReportOrders(purchaseByMonth);
     }
   }
@@ -290,11 +315,16 @@ export default function Report() {
 
   async function loadData(){
 
-    const response = await api.get('orders');
-    setOrders(response.data);
+    const response = await api.get('orders', {
+      params: {
+        date: '',
+        month: '',
+      }
+    });
     
+    setOrders(response.data);
     // Setting days with orders to mark on the calendar    
-    const orderedDays = response.data.map((order) => Moment(order.created_at, 'YYYY-MM-DD').format('YYYY-MM-DD'));
+    const orderedDays = response.data.map((order) => Moment(order.created_at, 'DD/MM/YYYY').format('YYYY-MM-DD'));
 
     orderedDays.forEach(day => {
 
@@ -308,7 +338,7 @@ export default function Report() {
   // Load orders from db
     useEffect (() => {
       
-      //loadData();
+      loadData();
 
    }, [])
 
