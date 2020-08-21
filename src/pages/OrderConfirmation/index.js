@@ -284,7 +284,7 @@ export default function OrderConfirmation() {
     const products = JSON.stringify(productMap);
     
     // Normal client selected, standard procedure 
-    if(client == 0){
+    if(client == 1){
 
       if( debtOrder > 0){
 
@@ -464,7 +464,7 @@ export default function OrderConfirmation() {
                 }}
                 placeholder={{
                   label: 'Cliente',
-                  value: '0',
+                  value: '1',
                   color: 'red',}
                 }
                 useNativeAndroidPickerStyle={false}
